@@ -10,14 +10,14 @@
 @forelse($tickets as $ticket)<tr><td>{{ $tickets->firstItem()+$loop->index }}</td><td><strong>{{ $ticket->subject }}</strong></td>@if($workspace==='admin')<td>{{ $ticket->user->name }}</td>@endif<td><span class="pill {{ $ticket->status }}">{{ $ticket->status }}</span></td><td>{{ $ticket->updated_at->format('Y-m-d') }}</td><td><x-ui.action-trigger menu="ticket-menu-{{ $ticket->id }}" label="Row actions" /></td></tr>@empty<tr><td colspan="{{ $workspace==='admin'?6:5 }}" class="muted" style="text-align:center;padding:28px">No tickets found.</td></tr>@endforelse
 </tbody></table></div>@include('partials.table-footer',['paginator'=>$tickets])</div>
 @if($workspace==='account')
-<dialog class="modal" id="ticket-create"><div class="modal-header"><h2>Contact Support</h2><button type="button" class="modal-close" data-close-modal>@include('partials.icon',['name'=>'close'])</button></div>
+<x-ui.modal-frame id="ticket-create"><div class="modal-header"><h2>Contact Support</h2><button type="button" class="modal-close" data-close-modal>@include('partials.icon',['name'=>'close'])</button></div>
 <form method="POST" action="{{ route('account.support.store') }}">@csrf
 <div class="modal-body"><div class="field-block"><label class="field-label" for="ticket-subject">Subject</label><input class="field" name="subject" id="ticket-subject" minlength="5" maxlength="190" required></div>
 <div class="field-block"><label class="field-label" for="ticket-message">Your message</label><textarea class="field" name="message" id="ticket-message" rows="7" minlength="10" maxlength="10000" required></textarea></div></div>
-<div class="modal-footer"><button class="btn btn-outline" type="button" data-close-modal>Cancel</button><button class="btn btn-primary" type="submit">Submit Ticket</button></div></form></dialog>@endif
+<div class="modal-footer"><button class="btn btn-outline" type="button" data-close-modal>Cancel</button><button class="btn btn-primary" type="submit">Submit Ticket</button></div></form></x-ui.modal-frame>@endif
 @foreach($tickets as $ticket)
-<div class="action-popover" popover="auto" id="ticket-menu-{{ $ticket->id }}">
+<x-ui.action-menu id="ticket-menu-{{ $ticket->id }}">
 <a href="{{ $workspace==='admin'?route('admin.support.show',$ticket):route('account.support.show',$ticket) }}">View conversation</a>
-</div>
+</x-ui.action-menu>
 @endforeach
 @endsection

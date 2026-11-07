@@ -17,9 +17,9 @@
 @else<p class="alert">This conversation is closed. An administrator can reopen it.</p>@endif
 </div>
 @if($workspace==='admin')
-<dialog class="modal" id="ticket-status"><div class="modal-header"><h2>Change Ticket Status</h2><button type="button" class="modal-close" data-close-modal>@include('partials.icon',['name'=>'close'])</button></div>
+<x-ui.modal-frame id="ticket-status"><div class="modal-header"><h2>Change Ticket Status</h2><button type="button" class="modal-close" data-close-modal>@include('partials.icon',['name'=>'close'])</button></div>
 <form method="POST" action="{{ route('admin.support.status',$ticket) }}">@csrf @method('PATCH')
 <div class="modal-body"><div class="field-block"><label class="field-label" for="ticket-status-choice">Status</label><select class="field" name="status" id="ticket-status-choice"><option value="open" @selected($ticket->status==='open')>Open</option><option value="waiting" @selected($ticket->status==='waiting')>Waiting for customer</option><option value="closed" @selected($ticket->status==='closed')>Closed</option></select></div></div>
-<div class="modal-footer"><button class="btn btn-outline" type="button" data-close-modal>Cancel</button><button class="btn btn-primary" type="submit">Update Status</button></div></form></dialog>
+<div class="modal-footer"><button class="btn btn-outline" type="button" data-close-modal>Cancel</button><button class="btn btn-primary" type="submit">Update Status</button></div></form></x-ui.modal-frame>
 @endif
 @endsection

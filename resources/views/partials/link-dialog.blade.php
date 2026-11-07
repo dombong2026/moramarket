@@ -1,4 +1,4 @@
-<dialog id="mm-editor-link" class="modal" aria-labelledby="mm-link-heading">
+<x-ui.modal-frame id="mm-editor-link" aria-labelledby="mm-link-heading">
   <div class="modal-header">
     <h2 id="mm-link-heading">Insert Link</h2>
     <button type="button" class="modal-close" data-close-modal aria-label="Close link editor">
@@ -16,4 +16,4 @@
       <button type="submit" class="btn btn-primary">Insert Link</button>
     </div>
   </form>
-</dialog>
+</x-ui.modal-frame>

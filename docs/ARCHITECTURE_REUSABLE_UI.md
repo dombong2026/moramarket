@@ -11,6 +11,7 @@ Status: GitHub-only development. No partial-code installation or production-serv
 - resources/views/components/ui/action-trigger.blade.php — one reusable vertical 3-dot action trigger.
 - resources/views/components/ui/action-menu.blade.php — menu surface rendered outside table scroll clipping.
 - resources/views/components/ui/modal.blade.php — reusable centered dialog shell.
+- resources/views/components/ui/modal-frame.blade.php — actual reusable modal frame adopted across the existing dashboard dialogs.
 - resources/views/partials/confirm-dialog.blade.php — shared in-theme confirmation.
 - resources/views/partials/notices.blade.php — consistent top-right success and error feedback, plus validation modal restoration.
 - resources/views/partials/table-tools.blade.php and table-footer.blade.php — search, filter, Previous/Next, Go To, and ten rows per page.
@@ -28,7 +29,8 @@ All dashboard sections should reuse these components. Never display placeholder 
 
 ## Security baseline
 
-- app/Http/Middleware/SecurityHeaders.php — no MIME sniffing, frame denial, referrer restrictions, permissions policy, restricted account-page caching, HSTS on HTTPS.
+- app/Http/Middleware/SecurityHeaders.php — no MIME sniffing, frame denial, referrer restrictions, permissions policy, restricted account-page caching, HSTS on HTTPS, and a restrictive script-src first-party Content Security Policy.
+- app/Services/AuditTrail.php — centralized Eloquent model and successful authentication audit event logging. Admin-only Security Center shows metadata, never secret field values.
 - Server-side validation and ownership checks are mandatory for every mutation.
 - Private files are streamed only after authorization. Public content is rendered only after publication.
 - Rich text must pass the allowlist sanitizer. The source editor never injects untrusted typed HTML into live browser DOM.

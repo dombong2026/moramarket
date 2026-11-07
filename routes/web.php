@@ -124,6 +124,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/appearance', [SettingsController::class, 'appearance'])->name('appearance');
         Route::patch('/appearance', [SettingsController::class, 'saveAppearance'])->name('appearance.update');
         Route::get('/system-health', [SettingsController::class, 'health'])->name('health');
+        Route::get('/security-center', [SecurityCenterController::class, 'index'])->name('audit.index');
         Route::get('/media', [MediaLibraryController::class, 'index'])->name('media');
         Route::post('/media', [MediaLibraryController::class, 'store'])->name('media.upload');
         Route::patch('/media/{asset}', [MediaLibraryController::class, 'update'])->name('media.update');

@@ -14,6 +14,7 @@ Moramarket is a self-hosted multi-vendor marketplace for physical products, digi
 
 - Shared responsive admin/vendor/customer dashboards, role authorization, authentication, system health, settings, appearance and footer visibility.
 - Central navigation registry, 10-row query service, shared three-dot action menus, modals, confirmation feedback and HTTP security headers.
+- Administrator Security Center with append-only model activity records and sign-in/sign-out audit metadata, without logging private field values.
 - Multi-vendor product listing and cash-on-delivery checkout for physical goods, category and vendor management, customer order history.
 - Five-step protected browser installer for a prebuilt release package, MySQL provisioning and initial administrator.
 - Private Media Library with images and video, metadata editing, owner scopes, featured media reuse.
@@ -31,6 +32,7 @@ This repository is an active development build, NOT a finished CodeCanyon buyer 
 - Developer guidance: docs/DEVELOPMENT.md
 - Architecture and security: docs/ARCHITECTURE.md
 - Shared frontend/backend/security standard: docs/ARCHITECTURE_REUSABLE_UI.md
+- Security Center and audit privacy model: docs/SECURITY_CENTER.md
 - New modules: docs/CONTENT_SUPPORT_DELIVERY.md
 - Roadmap: docs/ROADMAP.md
 

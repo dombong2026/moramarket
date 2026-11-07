@@ -29,6 +29,7 @@ final class WorkspaceNavigation
                 ['Appearance', 'sun', 'admin.appearance', [], 'admin.appearance*'],
                 ['General Settings', 'edit', 'admin.settings', [], 'admin.settings*'],
                 ['System Health', 'shield', 'admin.health', [], 'admin.health'],
+                ['Security Center', 'shield', 'admin.audit.index', [], 'admin.audit.*'],
             ],
             'vendor' => [
                 ['Overview', 'grid', 'vendor.home', [], 'vendor.home'],

@@ -88,8 +88,11 @@ class PlatformFoundationTest extends TestCase
         $this->get('/en')->assertOk()
             ->assertHeader('X-Content-Type-Options','nosniff')
             ->assertHeader('X-Frame-Options','DENY')
-            ->assertHeader('Referrer-Policy','strict-origin-when-cross-origin');
+            ->assertHeader('Referrer-Policy','strict-origin-when-cross-origin')
+            ->assertHeader('Content-Security-Policy');
         $this->get('/login')->assertOk()->assertHeader('Cache-Control','no-store, private');
+        $this->withCookie('mm-theme','dark')->get('/login')
+            ->assertOk()->assertSee('data-theme="dark"',false);
     }
 
     public function test_the_shared_sanitizer_rejects_executable_markup(): void

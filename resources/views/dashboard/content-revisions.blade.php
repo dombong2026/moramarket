@@ -8,10 +8,10 @@
 <td><x-ui.action-trigger menu="rev-menu-{{ $revision->id }}" label="Row actions" /></td></tr>@endforeach
 </tbody></table></div>@include('partials.table-footer',['paginator'=>$revisions])</div>
 @foreach($revisions as $revision)
-<div class="action-popover" popover="auto" id="rev-menu-{{ $revision->id }}"><button type="button" data-open-modal="restore-{{ $revision->id }}">Restore revision</button></div>
-<dialog class="modal" id="restore-{{ $revision->id }}"><div class="modal-header"><h2>Restore revision {{ $revision->revision }}?</h2><button class="modal-close" data-close-modal type="button">@include('partials.icon',['name'=>'close'])</button></div>
+<x-ui.action-menu id="rev-menu-{{ $revision->id }}"><button type="button" data-open-modal="restore-{{ $revision->id }}">Restore revision</button></x-ui.action-menu>
+<x-ui.modal-frame id="restore-{{ $revision->id }}"><div class="modal-header"><h2>Restore revision {{ $revision->revision }}?</h2><button class="modal-close" data-close-modal type="button">@include('partials.icon',['name'=>'close'])</button></div>
 <form method="POST" action="{{ route('admin.content.restore',['type'=>$type,'entry'=>$entry,'revision'=>$revision->revision]) }}">@csrf
 <div class="modal-body">A new revision will be created from version {{ $revision->revision }}. The current revision will remain in the history.</div>
-<div class="modal-footer"><button class="btn btn-outline" type="button" data-close-modal>Cancel</button><button class="btn btn-primary" type="submit">Restore Revision</button></div></form></dialog>
+<div class="modal-footer"><button class="btn btn-outline" type="button" data-close-modal>Cancel</button><button class="btn btn-primary" type="submit">Restore Revision</button></div></form></x-ui.modal-frame>
 @endforeach
 @endsection
