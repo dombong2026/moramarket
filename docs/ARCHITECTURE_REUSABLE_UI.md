@@ -41,3 +41,10 @@ All dashboard sections should reuse these components. Never display placeholder 
 Passing the automated Laravel test suite, PHP syntax checks and Vite build does not establish commercial completeness. Still required: independently packaged cPanel/aaPanel fresh installs and upgrades, real-device browser and accessibility testing, security penetration testing, supported merchant payment integration, tax/refund/shipping compliance, digital entitlements, commissions/payouts, notifications, full translations, legal review, system licensing/updater/backup workflows.
 
 No live-site deployment is authorized by GitHub commits.
+
+
+### Persisted theme preference
+
+The light/dark mode preference uses a dedicated, non-sensitive mm-theme cookie so Blade can render the correct theme before CSS loads. This **single** cookie is excluded from Laravel cookie encryption; session, authentication, remember-token and CSRF cookies retain their normal protections. User-supplied cookie values are restricted in templates to dark or light only. Browser JavaScript and server rendering share this preference.
+
+A GitHub feature test submits the literal unencrypted cookie to verify the production browser behavior. No production server or client data is used.

@@ -104,7 +104,7 @@ class PlatformFoundationTest extends TestCase
             ->assertHeader('Referrer-Policy','strict-origin-when-cross-origin')
             ->assertHeader('Content-Security-Policy');
         $this->get('/login')->assertOk()->assertHeader('Cache-Control','no-store, private');
-        $this->withCookie('mm-theme','dark')->get('/login')
+        $this->withUnencryptedCookie('mm-theme','dark')->get('/login')
             ->assertOk()->assertSee('data-theme="dark"',false);
     }
 

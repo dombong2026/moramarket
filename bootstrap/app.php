@@ -15,6 +15,9 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        // Only the non-sensitive light/dark preference is readable by JS.
+        // Authentication and session cookies remain encrypted by Laravel.
+        $middleware->encryptCookies(except: ['mm-theme']);
         $middleware->alias(['role' => RequireRole::class]);
         $middleware->appendToGroup('web', DetectLocale::class);
         $middleware->appendToGroup('web', SecurityHeaders::class);
