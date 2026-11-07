@@ -25,6 +25,8 @@ jobs:
           php artisan key:generate
       - name: Check standalone installer syntax
         run: php -l public/index.php && php -l public/installer/index.php
+      - name: Validate isolated aaPanel synchronization helper
+        run: bash -n support/aapanel-sync.sh && bash support/aapanel-sync.sh --help
       - name: Lint tracked PHP source files
         run: git ls-files -z '*.php' | xargs -0 -r -n 1 php -l
       - name: Run Laravel tests

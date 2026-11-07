@@ -30,6 +30,7 @@ Moramarket is a self-hosted multi-vendor marketplace for physical products, digi
 This repository is an active development build, NOT a finished CodeCanyon buyer package. Independent cPanel/aaPanel installation and upgrade, payment/legal/tax compliance, end-to-end browser review, security testing and packaging are required before release. Online payment gateways, digital entitlements, commissions/payouts, invoices/refunds, shipment carrier integrations and full 13-language translations are not active.
 
 - Developer guidance: docs/DEVELOPMENT.md
+- Safe aaPanel/GitHub source sync: docs/AAPANEL_GITHUB_SYNC.md
 - Architecture and security: docs/ARCHITECTURE.md
 - Shared frontend/backend/security standard: docs/ARCHITECTURE_REUSABLE_UI.md
 - Security Center and audit privacy model: docs/SECURITY_CENTER.md
