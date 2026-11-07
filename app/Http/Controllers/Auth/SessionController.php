@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Support\EmailNormalizer;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -27,8 +28,9 @@ class SessionController extends Controller
 
     public function login(Request $request)
     {
+        EmailNormalizer::normalizeRequest($request);
         $credentials = $request->validate([
-            'email' => ['required', 'email'],
+            'email' => ['required', 'email:rfc', 'max:190'],
             'password' => ['required', 'string'],
         ]);
 
@@ -42,6 +44,7 @@ class SessionController extends Controller
 
     public function register(Request $request)
     {
+        EmailNormalizer::normalizeRequest($request);
         $data = $request->validate([
             'name' => ['required', 'string', 'max:160'],
             'email' => ['required', 'email:rfc', 'max:190', 'unique:users,email'],
@@ -75,7 +78,8 @@ class SessionController extends Controller
 
     public function forgot(Request $request)
     {
-        $request->validate(['email' => ['required', 'email']]);
+        EmailNormalizer::normalizeRequest($request);
+        $request->validate(['email' => ['required', 'email:rfc', 'max:190']]);
         if (in_array(config('mail.default'), ['log', 'array'], true)) {
             return back()->withErrors(['email' => 'Email delivery is not configured. Contact the marketplace administrator.']);
         }
@@ -90,9 +94,10 @@ class SessionController extends Controller
 
     public function reset(Request $request)
     {
+        EmailNormalizer::normalizeRequest($request);
         $data = $request->validate([
             'token' => ['required'],
-            'email' => ['required', 'email'],
+            'email' => ['required', 'email:rfc', 'max:190'],
             'password' => ['required', 'confirmed', PasswordRule::min(10)->letters()->numbers()],
         ]);
 

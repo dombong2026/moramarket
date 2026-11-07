@@ -18,6 +18,13 @@ return Application::configure(basePath: dirname(__DIR__))
         // Only the non-sensitive light/dark preference is readable by JS.
         // Authentication and session cookies remain encrypted by Laravel.
         $middleware->encryptCookies(except: ['mm-theme']);
+        // All authenticated roles return to a dashboard they can actually access.
+        // Laravel's default guest redirect prefers /dashboard, which is admin-only.
+        $middleware->redirectUsersTo(fn (Request $request) => match (true) {
+            $request->user()?->isAdmin() => route('admin.home'),
+            $request->user()?->isApprovedVendor() => route('vendor.home'),
+            default => route('account.home'),
+        });
         $middleware->alias(['role' => RequireRole::class]);
         $middleware->appendToGroup('web', DetectLocale::class);
         $middleware->appendToGroup('web', SecurityHeaders::class);
