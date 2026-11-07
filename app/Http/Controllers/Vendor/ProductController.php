@@ -109,7 +109,7 @@ class ProductController extends Controller
             'stock' => ['required', 'integer', 'min:0', 'max:100000000'],
             'status' => ['required', 'in:draft,published'],
             'image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
-            'media_id' => ['nullable', 'integer', Rule::exists('media_assets', 'id')->where('user_id', $request->user()->id)->where('mime_type','like','image/%')],
+            'media_id' => ['nullable', 'integer', Rule::exists('media_assets', 'id')->where(fn ($query) => $query->where('user_id', $request->user()->id)->where('mime_type', 'like', 'image/%'))],
             'remove_image' => ['nullable', 'boolean'],
         ]);
     }
