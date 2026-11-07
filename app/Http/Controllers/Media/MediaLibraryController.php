@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Media;
 
+use App\Support\TableQuery;
+
 use App\Http\Controllers\Controller;
 use App\Models\ContentEntry;
 use App\Models\MediaAsset;
@@ -26,26 +28,15 @@ class MediaLibraryController extends Controller
 
     public function index(Request $request)
     {
-        $request->validate([
-            'q'=>['nullable','string','max:100'],
-            'status'=>['nullable','in:jpeg,png,webp,mp4,webm'],
-        ]);
         $query=MediaAsset::query()->with('user')->withCount('products');
         if (!$this->isAdministrator($request)) {
             $query->where('user_id',$request->user()->id);
         }
-        $assets=$query
-            ->when($request->filled('q'),fn ($q)=>$q->where(function ($sub) use ($request) {
-                $term='%'.$request->q.'%';
-                $sub->where('original_name','like',$term)->orWhere('alt_text','like',$term);
-            }))
-            ->when($request->filled('status'),function ($q) use ($request) {
-                $map=['jpeg'=>'image/jpeg','png'=>'image/png','webp'=>'image/webp',
-                    'mp4'=>'video/mp4','webm'=>'video/webm'];
-                return $q->where('mime_type',$map[$request->status]);
-            })
-            ->latest()->paginate(10)->withQueryString();
-
+        $query=TableQuery::apply($query,$request,['original_name','alt_text'],[
+            'jpeg'=>'image/jpeg','png'=>'image/png','webp'=>'image/webp',
+            'mp4'=>'video/mp4','webm'=>'video/webm',
+        ],'mime_type');
+        $assets=TableQuery::paginate($query->latest());
         return view('dashboard.media',[
             'assets'=>$assets,
             'workspace'=>$this->isAdministrator($request)?'admin':'vendor',

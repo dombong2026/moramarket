@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Vendor;
 
+use App\Support\TableQuery;
+
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\MediaAsset;
@@ -16,20 +18,13 @@ class ProductController extends Controller
 {
     public function index(Request $request)
     {
-        $request->validate([
-            'q' => ['nullable', 'string', 'max:100'],
-            'status' => ['nullable', 'in:draft,published'],
-        ]);
-
-        $vendor = $request->user()->vendor;
-        $products = $vendor->products()->with(['category', 'featuredMedia'])
-            ->when($request->filled('q'), fn ($q) => $q->where('title', 'like', '%'.$request->query('q').'%'))
-            ->when($request->filled('status'), fn ($q) => $q->where('status', $request->query('status')))
-            ->latest()->paginate(10)->withQueryString();
-        $categories = Category::where('is_active', true)->orderBy('name')->get();
-        $mediaAssets = MediaAsset::where('user_id', $request->user()->id)->where('mime_type','like','image/%')->latest()->limit(100)->get();
-
-        return view('dashboard.products', compact('products', 'categories', 'mediaAssets'));
+        $vendor=$request->user()->vendor;
+        $query=TableQuery::apply(Product::query()->where('vendor_id',$vendor->id)->with(['category','featuredMedia']),$request,['title'],['draft'=>'draft','published'=>'published']);
+        $products=TableQuery::paginate($query->latest());
+        $categories=Category::where('is_active',true)->orderBy('name')->get();
+        $mediaAssets=MediaAsset::where('user_id',$request->user()->id)
+            ->where('mime_type','like','image/%')->latest()->limit(100)->get();
+        return view('dashboard.products',compact('products','categories','mediaAssets'));
     }
 
     public function store(Request $request, MediaAssetService $service)

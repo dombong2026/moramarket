@@ -8,7 +8,7 @@
 @section('content')
 <div class="table-panel">@include('partials.table-tools',['statuses'=>['draft'=>'Draft','published'=>'Published']])
 <div class="table-scroll"><table class="data-table"><thead><tr><th>No</th><th>Title</th><th>Category</th><th>Status</th><th>Updated</th><th>Action</th></tr></thead><tbody>
-@forelse($articles as $article)<tr><td>{{ $articles->firstItem()+$loop->index }}</td><td><strong>{{ $article->title }}</strong></td><td>{{ $article->category->name }}</td><td><span class="pill {{ $article->status }}">{{ $article->status }}</span></td><td>{{ $article->updated_at->format('Y-m-d') }}</td><td><button class="action-trigger" data-menu-id="kb-menu-{{ $article->id }}" type="button">⋮</button></td></tr>@empty<tr><td colspan="6" class="muted" style="text-align:center;padding:28px">No help articles match your search.</td></tr>@endforelse
+@forelse($articles as $article)<tr><td>{{ $articles->firstItem()+$loop->index }}</td><td><strong>{{ $article->title }}</strong></td><td>{{ $article->category->name }}</td><td><span class="pill {{ $article->status }}">{{ $article->status }}</span></td><td>{{ $article->updated_at->format('Y-m-d') }}</td><td><x-ui.action-trigger menu="kb-menu-{{ $article->id }}" label="Row actions" /></td></tr>@empty<tr><td colspan="6" class="muted" style="text-align:center;padding:28px">No help articles match your search.</td></tr>@endforelse
 </tbody></table></div>@include('partials.table-footer',['paginator'=>$articles])</div>
 <dialog class="modal modal-lg" id="kb-categories"><div class="modal-header"><h2>Help Categories</h2><button class="modal-close" type="button" data-close-modal>@include('partials.icon',['name'=>'close'])</button></div>
 <div class="modal-body">

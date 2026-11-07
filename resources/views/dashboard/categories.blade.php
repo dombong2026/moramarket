@@ -7,7 +7,7 @@
 @include('partials.table-tools',['statuses'=>['active'=>'Active','inactive'=>'Inactive']])
 <div class="table-scroll"><table class="data-table"><thead><tr><th>No</th><th>Name</th><th>Slug</th><th>Products</th><th>Status</th><th>Updated</th><th>Actions</th></tr></thead><tbody>
 @forelse($categories as $category)<tr>
-<td>{{ $categories->firstItem()+$loop->index }}</td><td><strong>{{ $category->name }}</strong></td><td>{{ $category->slug }}</td><td>{{ $category->products_count }}</td><td><span class="pill {{ $category->is_active ? 'approved' : 'rejected' }}">{{ $category->is_active ? 'Active' : 'Inactive' }}</span></td><td>{{ $category->updated_at->format('Y-m-d') }}</td><td><button type="button" class="action-trigger" data-menu-id="category-menu-{{ $category->id }}" aria-label="Category actions">⋮</button></td>
+<td>{{ $categories->firstItem()+$loop->index }}</td><td><strong>{{ $category->name }}</strong></td><td>{{ $category->slug }}</td><td>{{ $category->products_count }}</td><td><span class="pill {{ $category->is_active ? 'approved' : 'rejected' }}">{{ $category->is_active ? 'Active' : 'Inactive' }}</span></td><td>{{ $category->updated_at->format('Y-m-d') }}</td><td><x-ui.action-trigger menu="category-menu-{{ $category->id }}" label="Category actions" /></td>
 </tr>@empty<tr><td colspan="7" style="padding:35px;text-align:center" class="muted">No matching categories.</td></tr>@endforelse
 </tbody></table></div>
 @include('partials.table-footer',['paginator'=>$categories])

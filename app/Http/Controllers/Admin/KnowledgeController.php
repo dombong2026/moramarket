@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Support\TableQuery;
+
 use App\Http\Controllers\Controller;
 use App\Models\KnowledgeArticle;
 use App\Models\KnowledgeCategory;
@@ -15,14 +17,8 @@ class KnowledgeController extends Controller
 {
     public function index(Request $request)
     {
-        $request->validate([
-            'q'=>['nullable','string','max:100'],
-            'status'=>['nullable','in:draft,published'],
-        ]);
-        $articles=KnowledgeArticle::query()->with('category')
-            ->when($request->filled('q'),fn ($q)=>$q->where('title','like','%'.$request->q.'%'))
-            ->when($request->filled('status'),fn ($q)=>$q->where('status',$request->status))
-            ->latest()->paginate(10)->withQueryString();
+        $query=TableQuery::apply(KnowledgeArticle::query()->with('category'),$request,['title'],['draft'=>'draft','published'=>'published']);
+        $articles=TableQuery::paginate($query->latest());
         $categories=KnowledgeCategory::query()->withCount('articles')->orderBy('name')->get();
         return view('dashboard.knowledge',compact('articles','categories'));
     }

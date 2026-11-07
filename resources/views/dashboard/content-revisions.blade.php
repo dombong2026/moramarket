@@ -5,7 +5,7 @@
 @section('content')
 <div class="table-panel"><div class="table-scroll"><table class="data-table"><thead><tr><th>Revision</th><th>Title</th><th>Status</th><th>Saved</th><th>Action</th></tr></thead><tbody>
 @foreach($revisions as $revision)<tr><td>v{{ $revision->revision }}</td><td>{{ $revision->snapshot['title'] ?? $entry->title }}</td><td>{{ $revision->snapshot['status'] ?? 'draft' }}</td><td>{{ $revision->created_at->format('Y-m-d H:i') }}</td>
-<td><button type="button" class="action-trigger" data-menu-id="rev-menu-{{ $revision->id }}">⋮</button></td></tr>@endforeach
+<td><x-ui.action-trigger menu="rev-menu-{{ $revision->id }}" label="Row actions" /></td></tr>@endforeach
 </tbody></table></div>@include('partials.table-footer',['paginator'=>$revisions])</div>
 @foreach($revisions as $revision)
 <div class="action-popover" popover="auto" id="rev-menu-{{ $revision->id }}"><button type="button" data-open-modal="restore-{{ $revision->id }}">Restore revision</button></div>

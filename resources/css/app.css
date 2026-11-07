@@ -72,3 +72,61 @@
 .video-thumb{width:74px;height:56px;display:grid;place-items:center;background:#141b2b;color:#fff;border-radius:8px;font-weight:650;font-size:12px}
 @media(max-width:920px){.article-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:560px){.article-grid{grid-template-columns:1fr}.article-layout{width:100%}.article-body{font-size:15px}.support-hero h1{font-size:29px}.editor-toolbar button{padding:5px 7px}}
+
+
+/* Moramarket shared design-system primitives — every role uses the same tokens.
+   Rules here intentionally cover existing Blade partials and reusable x-ui components. */
+:root {
+  --mm-radius-sm:9px;
+  --mm-radius-md:12px;
+  --mm-radius-lg:18px;
+  --mm-control-height:40px;
+  --mm-sidebar-width:246px;
+  --mm-transition:150ms ease;
+  --mm-ring:0 0 0 3px var(--focus);
+}
+@media(min-width:1051px){.workspace-shell{grid-template-columns:var(--mm-sidebar-width) minmax(0,1fr)}}
+.workspace-sidebar{min-height:0;overflow:hidden}
+.workspace-nav{flex:1;min-height:0;align-content:start;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:#526883 transparent;padding-bottom:10px}
+.sidebar-bottom{margin-top:12px;flex:none}
+.workspace-nav a{min-height:43px;transition:background var(--mm-transition),color var(--mm-transition)}
+.workspace-nav a[aria-current=page]{color:#fff;background:#263c5b;box-shadow:inset 3px 0 var(--brand)}
+.workspace-nav .svg-icon{opacity:.92}
+.table-controls input[type=search]{min-width:180px;flex:1}
+.table-footer,.table-controls{row-gap:12px}
+.table-scroll{overscroll-behavior-x:contain;scrollbar-width:thin}
+.action-trigger{display:inline-grid;place-items:center;min-width:36px;min-height:36px;font-family:inherit;font-weight:850;border-radius:10px;background:var(--surface);transition:border-color var(--mm-transition),background var(--mm-transition),color var(--mm-transition)}
+.action-trigger:hover,.action-trigger:focus-visible{border-color:var(--brand);background:var(--soft);color:var(--brand)}
+.action-popover:popover-open{width:196px;max-height:min(65vh,380px);overflow-y:auto}
+.action-popover a,.action-popover button{min-height:37px}
+.modal{max-height:min(90dvh,900px)}
+.modal[open]{flex-direction:column}
+.modal > form{display:flex;flex-direction:column;min-height:0}
+.modal-body{min-height:0;overflow:auto}
+.modal-header,.modal-footer{flex:none}
+.modal-header h2{line-height:1.3}
+.toast-stack{z-index:1000;max-width:min(420px,calc(100vw - 28px))}
+.field,.form-control,.table-controls input,.table-controls select{min-height:var(--mm-control-height)}
+input[type=checkbox],input[type=radio]{accent-color:var(--brand)}
+:where(a,button,input,textarea,select,summary,[contenteditable=true]):focus-visible{outline:2px solid var(--brand);outline-offset:3px}
+:where(dialog.modal,[popover]).is-open{box-shadow:var(--shadow)}
+.btn:disabled,.action-trigger:disabled{pointer-events:none}
+.section-actions{flex-wrap:wrap;justify-content:flex-end}
+.footer-columns{grid-template-columns:repeat(auto-fit,minmax(160px,1fr))}
+.product-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+@media(min-width:640px){.product-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(min-width:900px){.product-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(min-width:1180px){.product-grid{grid-template-columns:repeat(5,minmax(0,1fr))}}
+@media(min-width:1450px){.product-grid{grid-template-columns:repeat(6,minmax(0,1fr))}}
+@media(max-width:700px){
+  .section-actions{width:100%;justify-content:flex-start}
+  .modal-header,.modal-footer{padding:16px}
+  .modal-body{padding:17px}
+  .table-controls form{width:100%}
+  .table-controls input[type=search]{max-width:none;flex-basis:100%}
+  .table-footer{align-items:flex-start}
+  .footer-columns{gap:20px}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;transition-duration:.01ms!important}
+}

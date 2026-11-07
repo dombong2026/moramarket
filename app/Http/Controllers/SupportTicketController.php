@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Support\TableQuery;
+
 use App\Models\SupportTicket;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -16,21 +18,17 @@ class SupportTicketController extends Controller
 
     public function customerIndex(Request $request)
     {
-        $request->validate(['q'=>['nullable','string','max:100'],'status'=>['nullable','in:open,waiting,closed']]);
-        $tickets=$request->user()->supportTickets()
-            ->when($request->filled('q'),fn ($q)=>$q->where('subject','like','%'.$request->q.'%'))
-            ->when($request->filled('status'),fn ($q)=>$q->where('status',$request->status))
-            ->latest()->paginate(10)->withQueryString();
+        $states=['open'=>'open','waiting'=>'waiting','closed'=>'closed'];
+        $query=TableQuery::apply(SupportTicket::query()->where('user_id',$request->user()->id),$request,['subject'],$states);
+        $tickets=TableQuery::paginate($query->latest());
         return view('dashboard.support-tickets',['tickets'=>$tickets,'workspace'=>'account']);
     }
 
     public function adminIndex(Request $request)
     {
-        $request->validate(['q'=>['nullable','string','max:100'],'status'=>['nullable','in:open,waiting,closed']]);
-        $tickets=SupportTicket::query()->with('user')
-            ->when($request->filled('q'),fn ($q)=>$q->where('subject','like','%'.$request->q.'%'))
-            ->when($request->filled('status'),fn ($q)=>$q->where('status',$request->status))
-            ->latest()->paginate(10)->withQueryString();
+        $states=['open'=>'open','waiting'=>'waiting','closed'=>'closed'];
+        $query=TableQuery::apply(SupportTicket::query()->with('user'),$request,['subject'],$states);
+        $tickets=TableQuery::paginate($query->latest());
         return view('dashboard.support-tickets',['tickets'=>$tickets,'workspace'=>'admin']);
     }
 

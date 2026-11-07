@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Support\TableQuery;
+
 use App\Http\Controllers\Controller;
 use App\Models\Policy;
 use App\Services\SafeHtml;
@@ -15,15 +17,8 @@ class PolicyController extends Controller
 {
     public function index(Request $request)
     {
-        $request->validate([
-            'q'=>['nullable','string','max:100'],
-            'status'=>['nullable','in:draft,published'],
-        ]);
-
-        $policies = Policy::query()
-            ->when($request->filled('q'),fn ($q)=>$q->where('title','like','%'.$request->q.'%'))
-            ->when($request->filled('status'),fn ($q)=>$q->where('status',$request->status))
-            ->latest()->paginate(10)->withQueryString();
+        $query=TableQuery::apply(Policy::query(),$request,['title'],['draft'=>'draft','published'=>'published']);
+        $policies=TableQuery::paginate($query->latest());
         return view('dashboard.policies',compact('policies'));
     }
 

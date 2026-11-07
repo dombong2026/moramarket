@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Support\TableQuery;
+
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use Illuminate\Http\Request;
@@ -12,15 +14,9 @@ class CategoryController extends Controller
 {
     public function index(Request $request)
     {
-        $request->validate([
-            'q' => ['nullable', 'string', 'max:100'],
-            'status' => ['nullable', 'in:active,inactive'],
-        ]);
-        $categories = Category::query()->withCount('products')
-            ->when($request->filled('q'), fn ($q) => $q->where('name', 'like', '%'.$request->query('q').'%'))
-            ->when($request->filled('status'), fn ($q) => $q->where('is_active', $request->query('status') === 'active'))
-            ->orderBy('name')->paginate(10)->withQueryString();
-        return view('dashboard.categories', compact('categories'));
+        $query=TableQuery::apply(Category::query()->withCount('products'),$request,['name'],['active'=>true,'inactive'=>false],'is_active');
+        $categories=TableQuery::paginate($query->orderBy('name'));
+        return view('dashboard.categories',compact('categories'));
     }
 
     public function store(Request $request)

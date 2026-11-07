@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Account;
 
+use App\Support\TableQuery;
+
 use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Models\Vendor;
@@ -21,15 +23,10 @@ class AccountController extends Controller
 
     public function orders(Request $request)
     {
-        $request->validate([
-            'q' => ['nullable', 'string', 'max:100'],
-            'status' => ['nullable', 'in:pending,processing,shipped,completed,cancelled'],
-        ]);
-        $orders = Order::where('user_id', $request->user()->id)->with(['vendor', 'items'])
-            ->when($request->filled('q'), fn ($q) => $q->where('number', 'like', '%'.$request->query('q').'%'))
-            ->when($request->filled('status'), fn ($q) => $q->where('status', $request->query('status')))
-            ->latest()->paginate(10)->withQueryString();
-        return view('dashboard.orders', ['orders' => $orders, 'workspace' => 'account']);
+        $states=['pending','processing','shipped','completed','cancelled'];
+        $query=TableQuery::apply(Order::query()->where('user_id',$request->user()->id)->with(['vendor','items']),$request,['number'],array_combine($states,$states));
+        $orders=TableQuery::paginate($query->latest());
+        return view('dashboard.orders',['orders'=>$orders,'workspace'=>'account']);
     }
 
     public function apply(Request $request)

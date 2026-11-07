@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="{{ app()->getLocale() }}" dir="{{ app()->getLocale() === 'ar' ? 'rtl' : 'ltr' }}">
+<html data-theme="{{ request()->cookie('mm-theme') === 'dark' ? 'dark' : 'light' }}" lang="{{ app()->getLocale() }}" dir="{{ app()->getLocale() === 'ar' ? 'rtl' : 'ltr' }}">
 @php($ui = \App\Models\SiteSetting::query()->pluck('value','key'))
 <head>
 <meta charset="utf-8">
@@ -7,7 +7,7 @@
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <title>@yield('title', 'Moramarket') · {{ $ui->get('site_name','Moramarket') }}</title>
 <meta name="description" content="@yield('meta_description', 'Discover products and services from independent sellers on Moramarket.')">
-<script>document.documentElement.dataset.theme=localStorage.getItem('mm-theme')==='dark'?'dark':'light';</script>
+
 @vite(['resources/css/app.css','resources/js/app.js'])
 </head>
 <body class="site-body">

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Support\TableQuery;
+
 use App\Http\Controllers\Controller;
 use App\Models\Vendor;
 use Illuminate\Http\Request;
@@ -11,15 +13,9 @@ class VendorController extends Controller
 {
     public function index(Request $request)
     {
-        $request->validate([
-            'q' => ['nullable', 'string', 'max:100'],
-            'status' => ['nullable', 'in:pending,approved,rejected'],
-        ]);
-        $vendors = Vendor::with('user')->withCount('products')
-            ->when($request->filled('q'), fn ($q) => $q->where('name', 'like', '%'.$request->query('q').'%'))
-            ->when($request->filled('status'), fn ($q) => $q->where('status', $request->query('status')))
-            ->latest()->paginate(10)->withQueryString();
-        return view('dashboard.vendors', compact('vendors'));
+        $query=TableQuery::apply(Vendor::query()->with('user')->withCount('products'),$request,['name'],['pending'=>'pending','approved'=>'approved','rejected'=>'rejected']);
+        $vendors=TableQuery::paginate($query->latest());
+        return view('dashboard.vendors',compact('vendors'));
     }
 
     public function changeStatus(Request $request, Vendor $vendor)

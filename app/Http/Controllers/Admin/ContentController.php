@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Support\TableQuery;
+
 use App\Http\Controllers\Controller;
 use App\Models\ContentEntry;
 use App\Models\MediaAsset;
@@ -29,17 +31,10 @@ class ContentController extends Controller
     public function index(Request $request, string $type)
     {
         $this->type($type);
-        $request->validate([
-            'q'=>['nullable','string','max:100'],
-            'status'=>['nullable','in:draft,published'],
-        ]);
-        $entries = ContentEntry::query()->where('type', $type)->with('author')
-            ->when($request->filled('q'), fn ($q) => $q->where('title','like','%'.$request->q.'%'))
-            ->when($request->filled('status'), fn ($q) => $q->where('status',$request->status))
-            ->latest()->paginate(10)->withQueryString();
-
-        $mediaAssets = MediaAsset::where('user_id', $request->user()->id)->latest()->limit(100)->get();
-        return view('dashboard.content', compact('type','entries','mediaAssets'));
+        $query=TableQuery::apply(ContentEntry::query()->where('type',$type)->with('author'),$request,['title'],['draft'=>'draft','published'=>'published']);
+        $entries=TableQuery::paginate($query->latest());
+        $mediaAssets=MediaAsset::where('user_id',$request->user()->id)->latest()->limit(100)->get();
+        return view('dashboard.content',compact('type','entries','mediaAssets'));
     }
 
     public function store(Request $request, string $type, SafeHtml $sanitizer)

@@ -17,7 +17,7 @@
 <td>{{ strtoupper(str_replace(['image/','video/'],'',$asset->mime_type)) }}</td>
 <td>{{ number_format($asset->size_bytes / 1024,1) }} KB</td>
 <td>{{ $asset->products_count }}</td><td>{{ $asset->created_at->format('Y-m-d') }}</td>
-<td><button type="button" class="action-trigger" data-menu-id="asset-menu-{{ $asset->id }}" aria-label="Image actions">⋮</button></td>
+<td><x-ui.action-trigger menu="asset-menu-{{ $asset->id }}" label="Image actions" /></td>
 </tr>
 @empty<tr><td colspan="{{ $workspace==='admin'?9:8 }}" style="text-align:center;padding:35px" class="muted">No images found. Upload an image to get started.</td></tr>@endforelse
 </tbody></table></div>

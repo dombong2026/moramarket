@@ -6,7 +6,7 @@
 <div class="table-panel">
 @include('partials.table-tools',['statuses'=>['pending'=>'Pending','approved'=>'Approved','rejected'=>'Rejected']])
 <div class="table-scroll"><table class="data-table"><thead><tr><th>No</th><th>Store</th><th>Owner</th><th>Products</th><th>Status</th><th>Applied</th><th>Actions</th></tr></thead><tbody>
-@forelse($vendors as $vendor)<tr><td>{{ $vendors->firstItem()+$loop->index }}</td><td><strong>{{ $vendor->name }}</strong></td><td>{{ $vendor->user->name }}<span class="small">{{ $vendor->user->email }}</span></td><td>{{ $vendor->products_count }}</td><td><span class="pill {{ $vendor->status }}">{{ $vendor->status }}</span></td><td>{{ $vendor->created_at->format('Y-m-d') }}</td><td><button type="button" class="action-trigger" data-menu-id="vendor-menu-{{ $vendor->id }}" aria-label="Vendor actions">⋮</button></td></tr>
+@forelse($vendors as $vendor)<tr><td>{{ $vendors->firstItem()+$loop->index }}</td><td><strong>{{ $vendor->name }}</strong></td><td>{{ $vendor->user->name }}<span class="small">{{ $vendor->user->email }}</span></td><td>{{ $vendor->products_count }}</td><td><span class="pill {{ $vendor->status }}">{{ $vendor->status }}</span></td><td>{{ $vendor->created_at->format('Y-m-d') }}</td><td><x-ui.action-trigger menu="vendor-menu-{{ $vendor->id }}" label="Vendor actions" /></td></tr>
 @empty<tr><td colspan="7" style="padding:35px;text-align:center" class="muted">No matching vendor applications.</td></tr>@endforelse
 </tbody></table></div>
 @include('partials.table-footer',['paginator'=>$vendors])

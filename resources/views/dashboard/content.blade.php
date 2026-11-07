@@ -11,7 +11,7 @@
 @forelse($entries as $entry)
 <tr><td>{{ $entries->firstItem()+$loop->index }}</td><td><strong>{{ $entry->title }}</strong><small class="small">{{ $entry->slug }}</small></td><td>{{ $entry->author->name }}</td>
 <td><span class="pill {{ $entry->status }}">{{ ucfirst($entry->status) }}</span></td><td>{{ $entry->revision }}</td>
-<td>{{ $entry->updated_at->format('Y-m-d') }}</td><td><button class="action-trigger" type="button" data-menu-id="entry-menu-{{ $entry->id }}" aria-label="Actions">⋮</button></td></tr>
+<td>{{ $entry->updated_at->format('Y-m-d') }}</td><td><x-ui.action-trigger menu="entry-menu-{{ $entry->id }}" label="Actions" /></td></tr>
 @empty<tr><td colspan="7" class="muted" style="padding:28px;text-align:center">No matching {{ $type }}s.</td></tr>@endforelse
 </tbody></table></div>@include('partials.table-footer',['paginator'=>$entries])</div>
 <dialog class="modal modal-lg" id="content-create"><div class="modal-header"><h2>Create {{ ucfirst($type) }}</h2><button type="button" class="modal-close" data-close-modal>@include('partials.icon',['name'=>'close'])</button></div>

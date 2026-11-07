@@ -10,7 +10,7 @@
 <td>{{ $products->firstItem()+$loop->index }}</td>
 <td><div style="display:flex;align-items:center;gap:10px"><span class="cart-item-image" style="width:40px;height:40px">@if($product->image_path)<img src="{{ route('media.product',$product) }}" alt="">@else@include('partials.icon',['name'=>'box','size'=>19])@endif</span><strong>{{ $product->title }}</strong></div></td>
 <td>{{ $product->category->name }}</td><td>{{ ucfirst($product->type) }}</td><td>{{ number_format((float)$product->price,2) }}</td><td>{{ $product->stock }}</td><td><span class="pill {{ $product->status }}">{{ $product->status }}</span></td><td>{{ $product->updated_at->format('Y-m-d') }}</td>
-<td><button type="button" class="action-trigger" data-menu-id="product-menu-{{ $product->id }}" aria-label="Product actions">⋮</button></td>
+<td><x-ui.action-trigger menu="product-menu-{{ $product->id }}" label="Product actions" /></td>
 </tr>@empty<tr><td colspan="9" style="padding:35px;text-align:center" class="muted">No products match your filters. Add your first product using the action above.</td></tr>@endforelse
 </tbody></table></div>
 @include('partials.table-footer',['paginator'=>$products])

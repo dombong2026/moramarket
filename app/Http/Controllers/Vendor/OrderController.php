@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Vendor;
 
+use App\Support\TableQuery;
+
 use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Models\Product;
@@ -13,14 +15,9 @@ class OrderController extends Controller
 {
     public function index(Request $request)
     {
-        $request->validate([
-            'q'=>['nullable','string','max:100'],
-            'status'=>['nullable','in:pending,processing,shipped,completed,cancelled'],
-        ]);
-        $orders=$request->user()->vendor->orders()->with(['user','items'])
-            ->when($request->filled('q'),fn($q)=>$q->where('number','like','%'.$request->q.'%'))
-            ->when($request->filled('status'),fn($q)=>$q->where('status',$request->status))
-            ->latest()->paginate(10)->withQueryString();
+        $states=['pending','processing','shipped','completed','cancelled'];
+        $query=TableQuery::apply(Order::query()->where('vendor_id',$request->user()->vendor->id)->with(['user','items']),$request,['number'],array_combine($states,$states));
+        $orders=TableQuery::paginate($query->latest());
         return view('dashboard.orders',['orders'=>$orders,'workspace'=>'vendor']);
     }
 
