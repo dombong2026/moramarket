@@ -4,10 +4,12 @@ use App\Http\Controllers\Account\AccountController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Admin\VendorController as AdminVendorController;
+use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\Auth\SessionController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\Dashboard\WorkspaceController;
+use App\Http\Controllers\Media\ProductImageController;
 use App\Http\Controllers\StorefrontController;
 use App\Http\Controllers\Vendor\OrderController as VendorOrderController;
 use App\Http\Controllers\Vendor\ProductController;
@@ -26,6 +28,8 @@ Route::get('/language/{locale}', function (Request $request, string $locale) {
     $request->session()->put('locale', $locale);
     return redirect()->route('locale.home', ['locale' => $locale]);
 })->where('locale', $localePattern)->name('language.choose');
+
+Route::get('/listing-image/{product}', [ProductImageController::class, 'show'])->name('media.product');
 
 Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
 Route::post('/cart/{product}', [CartController::class, 'add'])->name('cart.add');
@@ -62,6 +66,11 @@ Route::middleware('auth')->group(function () {
         Route::get('/vendors', [AdminVendorController::class, 'index'])->name('vendors');
         Route::patch('/vendors/{vendor}', [AdminVendorController::class, 'changeStatus'])->name('vendors.status');
         Route::get('/orders', [AdminOrderController::class, 'index'])->name('orders');
+        Route::get('/settings', [SettingsController::class, 'general'])->name('settings');
+        Route::patch('/settings', [SettingsController::class, 'saveGeneral'])->name('settings.update');
+        Route::get('/appearance', [SettingsController::class, 'appearance'])->name('appearance');
+        Route::patch('/appearance', [SettingsController::class, 'saveAppearance'])->name('appearance.update');
+        Route::get('/system-health', [SettingsController::class, 'health'])->name('health');
     });
 
     Route::prefix('vendor')->name('vendor.')->middleware('role:vendor')->group(function () {

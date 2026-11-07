@@ -1,6 +1,6 @@
 <article class="product-card">
  <a class="product-photo" href="{{ route('locale.product',['locale'=>app()->getLocale(),'product'=>$product->slug]) }}">
- @if($product->image_path)<img src="{{ asset('storage/'.$product->image_path) }}" alt="{{ $product->title }}" loading="lazy">@else
+ @if($product->image_path)<img src="{{ route('media.product',$product) }}" alt="{{ $product->title }}" loading="lazy">@else
  <span class="muted">@include('partials.icon',['name'=>'box','size'=>37])</span>@endif
  </a>
  <div class="product-card-content"><div class="product-type">{{ ucfirst($product->type) }} · {{ $product->category->name }}</div>

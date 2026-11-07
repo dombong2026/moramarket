@@ -15,7 +15,7 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.4'
-          extensions: mbstring, dom, ctype, curl, fileinfo, pdo_sqlite, sqlite3, xml
+          extensions: mbstring, dom, ctype, curl, fileinfo, pdo_sqlite, sqlite3, pdo_mysql, xml
           coverage: none
       - name: Install Composer dependencies
         run: composer install --no-interaction --prefer-dist --no-progress
@@ -23,6 +23,8 @@ jobs:
         run: |
           cp .env.example .env
           php artisan key:generate
+      - name: Check standalone installer syntax
+        run: php -l public/index.php && php -l public/installer/index.php
       - name: Run Laravel tests
         run: php artisan test --compact
       - uses: actions/setup-node@v4
@@ -32,3 +34,39 @@ jobs:
         run: npm install --ignore-scripts
       - name: Build Tailwind assets
         run: npm run build
+
+  installer:
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: CI_root_password_891
+          MYSQL_DATABASE: moramarket_install_ci
+          MYSQL_USER: moramarket_ci
+          MYSQL_PASSWORD: CI_DB_Password_891
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping --silent"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: mbstring, dom, ctype, curl, fileinfo, pdo_mysql, xml
+          coverage: none
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Prepare application package dependencies
+        run: |
+          composer install --no-interaction --prefer-dist --no-progress
+          npm install --ignore-scripts
+          npm run build
+      - name: Check standalone installer
+        run: php -l public/installer/index.php && bash support/qa-installer.sh

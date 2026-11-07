@@ -7,7 +7,7 @@
 <div class="cart-list">
 @foreach($items as $line)
 @php($product=$line['product'])
-<div class="panel cart-item"><div class="cart-item-image">@if($product->image_path)<img alt="{{ $product->title }}" src="{{ asset('storage/'.$product->image_path) }}">@else@include('partials.icon',['name'=>'box'])@endif</div>
+<div class="panel cart-item"><div class="cart-item-image">@if($product->image_path)<img alt="{{ $product->title }}" src="{{ route('media.product',$product) }}">@else@include('partials.icon',['name'=>'box'])@endif</div>
  <div><a style="font-weight:750" href="{{ route('locale.product',['locale'=>app()->getLocale(),'product'=>$product->slug]) }}">{{ $product->title }}</a><p class="muted">{{ $product->vendor->name }} · {{ number_format((float)$product->price,2) }} each</p></div>
  <strong>{{ number_format($line['lineCents']/100,2) }}</strong>
  <div class="cart-item-actions"><form action="{{ route('cart.update',$product) }}" method="POST" style="display:flex;gap:8px;align-items:center">@csrf @method('PATCH')<label class="sr-only" for="cart-qty-{{ $product->id }}">Quantity</label><input class="field" id="cart-qty-{{ $product->id }}" name="quantity" type="number" min="0" max="{{ min(99,$product->stock) }}" value="{{ $line['quantity'] }}" required><button type="submit" class="btn btn-outline btn-sm">Update</button></form><form action="{{ route('cart.remove',$product) }}" method="POST">@csrf @method('DELETE')<button class="btn btn-ghost btn-sm" type="submit">Remove</button></form></div>

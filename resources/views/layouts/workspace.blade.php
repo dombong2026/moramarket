@@ -18,6 +18,9 @@
     <a @class(['active'=>request()->routeIs('admin.categories*')]) href="{{ route('admin.categories') }}">@include('partials.icon',['name'=>'tag']) Categories</a>
     <a @class(['active'=>request()->routeIs('admin.vendors*')]) href="{{ route('admin.vendors') }}">@include('partials.icon',['name'=>'store']) Vendors</a>
     <a @class(['active'=>request()->routeIs('admin.orders*')]) href="{{ route('admin.orders') }}">@include('partials.icon',['name'=>'orders']) Orders</a>
+    <a @class(['active'=>request()->routeIs('admin.appearance*')]) href="{{ route('admin.appearance') }}">@include('partials.icon',['name'=>'sun']) Appearance</a>
+    <a @class(['active'=>request()->routeIs('admin.settings*')]) href="{{ route('admin.settings') }}">@include('partials.icon',['name'=>'edit']) General Settings</a>
+    <a @class(['active'=>request()->routeIs('admin.health')]) href="{{ route('admin.health') }}">@include('partials.icon',['name'=>'shield']) System Health</a>
   @elseif($scope==='vendor')
     <a @class(['active'=>request()->routeIs('vendor.home')]) href="{{ route('vendor.home') }}">@include('partials.icon',['name'=>'grid']) Overview</a>
     <a @class(['active'=>request()->routeIs('vendor.products*')]) href="{{ route('vendor.products') }}">@include('partials.icon',['name'=>'box']) My Products</a>
