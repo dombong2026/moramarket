@@ -2,24 +2,24 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\Category;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Str;
 
 class DatabaseSeeder extends Seeder
 {
-    use WithoutModelEvents;
-
-    /**
-     * Seed the application's database.
-     */
     public function run(): void
     {
-        // User::factory(10)->create();
-
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
+        foreach ([
+            'Fresh Produce', 'Grocery & Food', 'Fashion & Clothing', 'Electronics',
+            'Home & Living', 'Beauty & Personal Care', 'Books & Education',
+            'Health & Wellness', 'Sports & Outdoors', 'Handmade & Crafts',
+            'Digital Products', 'Professional Services',
+        ] as $name) {
+            Category::firstOrCreate(
+                ['slug' => Str::slug($name)],
+                ['name' => $name, 'is_active' => true],
+            );
+        }
     }
 }
