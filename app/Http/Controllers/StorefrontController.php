@@ -8,14 +8,14 @@ use Illuminate\Http\Request;
 
 class StorefrontController extends Controller
 {
-    public function home()
+    public function home(string $locale)
     {
         $categories = Category::query()->where('is_active', true)->orderBy('name')->get();
         $products = Product::query()->visible()->with(['vendor', 'category'])->latest()->paginate(12);
         return view('storefront.home', compact('categories', 'products'));
     }
 
-    public function catalog(Request $request)
+    public function catalog(Request $request, string $locale)
     {
         $request->validate([
             'q' => ['nullable', 'string', 'max:100'],
@@ -33,7 +33,7 @@ class StorefrontController extends Controller
         return view('storefront.catalog', compact('products', 'categories'));
     }
 
-    public function category(Category $category)
+    public function category(string $locale, Category $category)
     {
         abort_unless($category->is_active, 404);
         $products = Product::query()->visible()->with(['vendor', 'category'])
@@ -45,7 +45,7 @@ class StorefrontController extends Controller
         ]);
     }
 
-    public function product(Product $product)
+    public function product(string $locale, Product $product)
     {
         abort_unless(Product::query()->visible()->whereKey($product->id)->exists(), 404);
         $product->load(['category', 'vendor']);
