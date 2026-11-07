@@ -72,3 +72,40 @@ document.querySelectorAll('[data-goto-form]').forEach(form => {
         if (!input || !Number.isInteger(Number(input.value)) || Number(input.value) < 1) e.preventDefault();
     });
 });
+
+
+// Real Media Library image previews: existing asset selection or local file upload.
+document.querySelectorAll('[data-media-picker]').forEach(select => {
+    const preview = document.getElementById(select.dataset.mediaPicker);
+    if (!preview) return;
+    const sync = () => {
+        const option = select.selectedOptions[0];
+        if (option?.dataset.preview) {
+            preview.src = option.dataset.preview;
+            preview.hidden = false;
+        } else {
+            preview.removeAttribute('src');
+            preview.hidden = true;
+        }
+    };
+    select.addEventListener('change', sync);
+    sync();
+});
+
+document.querySelectorAll('input[type="file"][data-file-preview]').forEach(input => {
+    let previousUrl = null;
+    const preview = document.getElementById(input.dataset.filePreview);
+    if (!preview) return;
+    input.addEventListener('change', () => {
+        if (previousUrl) URL.revokeObjectURL(previousUrl);
+        const file = input.files?.[0];
+        if (file?.type?.startsWith('image/')) {
+            previousUrl = URL.createObjectURL(file);
+            preview.src = previousUrl;
+            preview.hidden = false;
+        } else {
+            preview.removeAttribute('src');
+            preview.hidden = true;
+        }
+    });
+});

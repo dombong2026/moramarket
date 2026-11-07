@@ -1,13 +1,11 @@
-# Moramarket release gates
+# Moramarket Release Milestones
 
-**v0.0.1 — Laravel foundation and core workflows:** role-based dashboards, product/category/vendor workflows, safe physical-goods COD checkout, responsive basic storefront, initial feature tests.
+1. Foundation (CI checked): Laravel 13, role-based dashboards, physical product COD checkout, storefront, product/category/vendor workflows and customer accounts.
+2. Installer and appearance (implementation committed, CI validation in progress): Five-step browser installer, protected first administrator, site/hero/footer settings, system-health checks and product image streaming.
+3. Image Media Library (implemented, CI validation in progress): private vendor/admin images, edit/delete, featured product image picker, upload preview and guarded deletion. Video/YouTube and richer image processing remain separate.
+4. Next acceptance milestone: independent cPanel/aaPanel installation of the buyer ZIP, responsive real-device QA, installer recovery test and shipping/delivery workflows.
+5. Commercial workflows: verified shipping and tax engines, ledger and commissions, vendor settlements, refunds, digital entitlements and service fulfillment.
+6. Content and localization: Page/Post Manager, SEO, sanitized rich editor, CMS media selection, Policy Center, Support Center and complete 13-language translations.
+7. System and release: license verifier, authenticated updater/rollback, audit trail, backups, SMTP verification, secure notifications and CodeCanyon documentation.
 
-**Next implementation milestone:** secure five-step browser installer with one-time admin bootstrap; verified access control tests; richer shared dashboard tables; configuration-driven header/footer; native image/media library; supplier shipping and delivery rules.
-
-**Commerce milestone:** real shipping/tax/ledger models, vendor settlement and commission, refunds/cancellations, payment processor sandbox eligibility and webhook verification, secure digital product vault, service-booking workflow.
-
-**Content milestone:** Page/Post Manager, SEO, editor with safe HTML sanitization, featured-media handling, Appearance settings, multilingual phrase manager (13 locales), Policy and Support Centers.
-
-**System milestone:** License Checker, authenticated updater with backups/rollback, system health/requirements, audit trails, secure backups, notifications/SMTP verification, account controls.
-
-**Release acceptance:** CI green, security review, working browser installer on both cPanel and aaPanel, responsive visual acceptance on physical devices, all visible actions tested, full product documentation, marketing/demo pages verified, CodeCanyon submission review. No real payments until separately approved.
+Shipping status is NOT production-approved. No live gateway transactions, payouts or paid digital fulfillment until separate provider, security and legal acceptance.

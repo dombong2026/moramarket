@@ -9,7 +9,7 @@ class Product extends Model
 {
     protected $fillable = [
         'vendor_id', 'category_id', 'title', 'slug', 'description',
-        'type', 'price', 'stock', 'image_path', 'status',
+        'type', 'price', 'stock', 'image_path', 'featured_media_id', 'status',
     ];
 
     protected function casts(): array
@@ -25,6 +25,11 @@ class Product extends Model
     public function category()
     {
         return $this->belongsTo(Category::class);
+    }
+
+    public function featuredMedia()
+    {
+        return $this->belongsTo(MediaAsset::class, 'featured_media_id');
     }
 
     public function orderItems()

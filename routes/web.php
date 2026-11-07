@@ -10,6 +10,7 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\Dashboard\WorkspaceController;
 use App\Http\Controllers\Media\ProductImageController;
+use App\Http\Controllers\Media\MediaLibraryController;
 use App\Http\Controllers\StorefrontController;
 use App\Http\Controllers\Vendor\OrderController as VendorOrderController;
 use App\Http\Controllers\Vendor\ProductController;
@@ -49,6 +50,7 @@ Route::middleware('guest')->group(function () {
 
 Route::middleware('auth')->group(function () {
     Route::post('/logout', [SessionController::class, 'logout'])->name('logout');
+    Route::get('/media-preview/{asset}', [MediaLibraryController::class, 'preview'])->name('media.preview');
     Route::get('/checkout', [CheckoutController::class, 'form'])->name('checkout.form');
     Route::post('/checkout', [CheckoutController::class, 'place'])->middleware('throttle:5,1')->name('checkout.place');
 
@@ -71,6 +73,10 @@ Route::middleware('auth')->group(function () {
         Route::get('/appearance', [SettingsController::class, 'appearance'])->name('appearance');
         Route::patch('/appearance', [SettingsController::class, 'saveAppearance'])->name('appearance.update');
         Route::get('/system-health', [SettingsController::class, 'health'])->name('health');
+        Route::get('/media', [MediaLibraryController::class, 'index'])->name('media');
+        Route::post('/media', [MediaLibraryController::class, 'store'])->name('media.upload');
+        Route::patch('/media/{asset}', [MediaLibraryController::class, 'update'])->name('media.update');
+        Route::delete('/media/{asset}', [MediaLibraryController::class, 'destroy'])->name('media.delete');
     });
 
     Route::prefix('vendor')->name('vendor.')->middleware('role:vendor')->group(function () {
@@ -80,6 +86,10 @@ Route::middleware('auth')->group(function () {
         Route::patch('/products/{product}', [ProductController::class, 'update'])->name('products.update');
         Route::delete('/products/{product}', [ProductController::class, 'destroy'])->name('products.delete');
         Route::get('/orders', [VendorOrderController::class, 'index'])->name('orders');
+        Route::get('/media', [MediaLibraryController::class, 'index'])->name('media');
+        Route::post('/media', [MediaLibraryController::class, 'store'])->name('media.upload');
+        Route::patch('/media/{asset}', [MediaLibraryController::class, 'update'])->name('media.update');
+        Route::delete('/media/{asset}', [MediaLibraryController::class, 'destroy'])->name('media.delete');
         Route::patch('/orders/{order}', [VendorOrderController::class, 'update'])->name('orders.update');
     });
 });

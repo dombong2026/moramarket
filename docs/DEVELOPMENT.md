@@ -1,26 +1,46 @@
-# Moramarket developer setup
+# Moramarket Developer and Installer Instructions
 
-Status: development baseline, not an accepted buyer installer.
+Development version v0.0.1. Not yet an accepted public customer release.
 
-## Requirements
-- PHP >=8.3 and standard Laravel extensions (Ctype, cURL, DOM, Fileinfo, Filter, Hash, Mbstring, OpenSSL, PCRE, PDO, Session, Tokenizer, XML)
-- Composer 2
-- MySQL 8+ or MariaDB (SQLite is supported for tests)
-- Node.js compatible with Vite 8 for building assets
-- Apache or Nginx with document root pointing to public/
+## Developer prerequisites
 
-## Development startup
-1. Run composer install on a supported developer machine.
-2. Copy .env.example to .env and configure a database connection, APP_URL, APP_KEY (generate a unique key), and SMTP.
-3. Run php artisan migrate and php artisan db:seed.
-4. Run php artisan storage:link for uploaded product images.
-5. Run npm install and npm run build.
-6. Serve the public/ document root using a supported PHP runtime.
+- PHP 8.3+ and standard Laravel extensions including PDO MySQL.
+- MySQL 8+, Composer 2, and Node.js compatible with Vite 8.
+- Web server document root MUST point to the Laravel public/ directory.
 
-Tests use php artisan test. GitHub Actions contains the automated test/build workflow.
+## Developer setup
 
-## Administrator provisioning
-An administrator must be created through a secure setup process. The production-grade browser installer has **not** yet been implemented, so do not place the current build online for customer registration or sales. Do not insert a publicly documented default administrator password.
+1. Install dependencies on a trusted development machine using composer install.
+2. Build frontend assets using npm install --ignore-scripts and npm run build.
+3. For local development configure .env, generate APP_KEY, and migrate/seed via Artisan.
+4. Run php artisan test; CI also runs the standalone installer smoke test with MySQL.
 
-## Shared hosting distribution gate
-Before selling, produce a verified package with Composer vendor dependencies, compiled assets, a secure browser installer, database preflight, administration setup, rollback/upgrade checks, and an acceptance matrix for cPanel and aaPanel. No shell commands may be required from end customers at that stage.
+## Browser installation for a prepared buyer archive
+
+Package the application with vendor/ and public/build/ already included. Do not upload private credentials or any developer .env. Extract outside the public document root and set the domain's document root to public/.
+
+- Open the site and follow the redirect to /installer/.
+- Open the privately generated storage/app/installer-access.key in the cPanel or aaPanel file manager and enter its code. Do not share this code.
+- Step 1 verifies PHP, required extensions, storage permissions, web document root and compiled assets.
+- Step 2 validates credentials and requires an empty MySQL database.
+- Step 3 sets the website identity and URL.
+- Step 4 creates the first administrator account with a strong password.
+- Step 5 confirms that the installer has been locked and offers a link to sign in.
+
+Installer runtime creates .env, runs migrations and seeding through the Laravel console kernel without shelling out, creates the administrator and a private installation marker, then deletes the installer access code. The Purchase Code label is informational at this stage; no licensing server is connected and no valid license is falsely claimed.
+
+## Operational warnings
+
+- Do not set the document root to the project root or expose vendor, .env or storage directories.
+- Configure real SMTP before depending on password recovery.
+- Never use an existing customer database during installation.
+- Partial migrations after failure require an authorized manual recovery procedure.
+- Real cPanel and aaPanel installation, upgrade, backup, PHP version and permissions acceptance remain separate from CI.
+- Live payments and purchase fulfillment for digital products are disabled until separately tested and approved.
+
+
+## Private Media Library
+
+Administrators manage images at /dashboard/media. Approved vendors manage only their own images at /vendor/media. Uploaded JPEG, PNG and WebP images use the private local disk. Product forms can reuse owned images or upload a new one; uploading a new image also registers it in the Media Library. In-use images cannot be deleted until product associations are removed. The public storefront receives approved product images through an authorized Laravel route; no public/storage symlink is needed.
+
+Video, YouTube, digital downloads and arbitrary file uploads are not available in this initial Media Library implementation.

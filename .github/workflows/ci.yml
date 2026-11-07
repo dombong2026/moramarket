@@ -15,7 +15,7 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.4'
-          extensions: mbstring, dom, ctype, curl, fileinfo, pdo_sqlite, sqlite3, pdo_mysql, xml
+          extensions: mbstring, dom, ctype, curl, fileinfo, gd, pdo_sqlite, sqlite3, pdo_mysql, xml
           coverage: none
       - name: Install Composer dependencies
         run: composer install --no-interaction --prefer-dist --no-progress
@@ -58,7 +58,7 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.4'
-          extensions: mbstring, dom, ctype, curl, fileinfo, pdo_mysql, xml
+          extensions: mbstring, dom, ctype, curl, fileinfo, gd, pdo_mysql, xml
           coverage: none
       - uses: actions/setup-node@v4
         with:

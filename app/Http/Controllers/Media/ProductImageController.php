@@ -20,12 +20,14 @@ class ProductImageController extends Controller
         abort_unless($publicListing || $owner || $admin, 404);
 
         $path = $product->image_path;
-        abort_unless(is_string($path) && str_starts_with($path, 'products/'), 404);
+        abort_unless(
+            is_string($path) && (str_starts_with($path, 'products/') || str_starts_with($path, 'media/')),
+            404,
+        );
 
-        $disk = Storage::disk('public');
+        $disk = Storage::disk($product->featured_media_id ? 'local' : 'public');
         abort_unless($disk->exists($path), 404);
 
-        // Serve from the Laravel disk without requiring a symlink or exposing drafts.
         return $disk->response($path, null, [
             'Cache-Control' => 'private, max-age=300',
             'X-Content-Type-Options' => 'nosniff',

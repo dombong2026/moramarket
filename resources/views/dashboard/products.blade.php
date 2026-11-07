@@ -24,7 +24,11 @@
 <div><label for="product-create-price" class="field-label">Price</label><input class="field" id="product-create-price" type="number" step="0.01" min="0" name="price" required></div>
 <div><label for="product-create-stock" class="field-label">Stock quantity</label><input class="field" id="product-create-stock" type="number" min="0" name="stock" value="0" required></div>
 <div><label for="product-create-status" class="field-label">Publish status</label><select class="field" id="product-create-status" name="status"><option value="draft">Draft</option><option value="published">Published</option></select></div>
-<div><label for="product-create-image" class="field-label">Featured image (JPG, PNG, WebP up to 5MB)</label><input class="field" type="file" id="product-create-image" name="image" accept="image/jpeg,image/png,image/webp"></div>
+<div class="full"><label for="product-create-media" class="field-label">Choose image from Media Library</label>
+<select class="field" id="product-create-media" name="media_id" data-media-picker="create-media-preview">
+<option value="">No existing image selected</option>
+@foreach($mediaAssets as $asset)<option value="{{ $asset->id }}" data-preview="{{ route('media.preview',$asset) }}">{{ $asset->original_name }}</option>@endforeach
+</select><img id="create-media-preview" class="media-picker-preview" alt="Selected featured image" hidden><p class="native-note">You can also <a class="text-link" href="{{ route('vendor.media') }}">manage your Media Library</a>. Uploading a new file below takes priority.</p></div><div class="full"><label for="product-create-image" class="field-label">Or upload a new featured image (JPG, PNG, WebP, up to 5MB)</label><input class="field" type="file" id="product-create-image" name="image" data-file-preview="create-media-preview" accept="image/jpeg,image/png,image/webp"></div>
 <div class="full"><label for="product-create-description" class="field-label">Product description</label><textarea class="field" name="description" id="product-create-description" rows="6" maxlength="20000"></textarea></div>
 </div><p class="native-note">Digital products and services can be published as informational listings. Checkout is enabled only for available physical products.</p></div><div class="modal-footer"><button class="btn btn-outline" type="button" data-close-modal>Cancel</button><button class="btn btn-primary" type="submit">Create Product</button></div></form></dialog>
 @foreach($products as $product)

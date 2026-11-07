@@ -1,33 +1,42 @@
 # Moramarket v0.0.1 Architecture
 
-## Implemented application infrastructure
-- Laravel 13.x and PHP 8.3+, Tailwind CSS 4 and Vite 8.
-- Laravel session authentication with login, registration, logout, password-reset broker, and rate limiting.
-- Three role-aware dashboard route groups sharing one responsive Blade shell.
-- Administrator category create, read, update, delete with foreign-key safeguards; vendor application approvals.
-- Vendor product create, read, update, delete and image uploads; vendor-specific order visibility and fulfillment status updates.
-- Customer profile changes, vendor applications, and order history.
-- Published, active-category, approved-vendor storefront filters.
-- Session cart and atomic, stock-locked, multi-vendor cash-on-delivery checkout for physical goods.
-- Internationalization locale detection and locale-prefixed public catalog URLs, without claiming completed translations.
-- Automated feature tests and frontend build workflow.
+## Implemented
 
-## Not implemented (do not advertise as shipped)
-- Buyer-facing five-step / one-click installer and administrator bootstrap wizard.
-- Media Library, appearance/page builder, rich-text CMS editor, posts, pages, and footer section configuration.
-- Digital entitlement/download delivery and service scheduling/fulfillment.
-- Tax, shipping, refunds, accounting ledger, commissions, payouts, and provider-verified payments.
-- Policy Center, Support Center, notification queue, translated content strings, multi-currency checkout.
-- License Checker, automatic updater, system maintenance dashboard, auditing and backup UI.
-- CodeCanyon buyer package, full legal templates and customer-installation acceptance.
+- Laravel 13 and PHP 8.3+, Tailwind CSS 4, Blade and Vite.
+- Laravel authentication, CSRF, throttled login/registration/reset flows and role-scoped workspaces.
+- Administrator categories, vendor approval, order review, General Settings, homepage/footer Appearance, and read-only System Health checks.
+- Vendor product CRUD, image uploads and protected order management; customer profile, vendor applications and order history.
+- Public catalog, stock-locked multi-vendor COD physical product checkout. Digital products and services are listing-only.
+- A private image-only Media Library with role-scoped upload, view, metadata editing and deletion; product featured-media reuse and deletion safeguards. Media files use the private Laravel local disk, and controlled image streaming avoids public/storage symlinks.
+- Locale-prefixed public URLs for 13 languages, language preference detection only. Full translations are not implemented.
+- Standalone five-step PHP installer before Laravel bootstrap, private access key, CSRF, prepared package preflight, empty MySQL database verification, private .env generation, framework migrations, first admin, and an installer lock file.
+- Automated PHPUnit checks, frontend build and CI MySQL-powered HTTP installer acceptance.
 
-## Security decisions
-- Anonymous registration always creates a customer. Administrator accounts must be provisioned securely, never through an unguarded registration field.
-- Vendor access requires an approved vendor relationship. Vendor product and order mutations are owner-scoped.
-- Product descriptions are escaped, not rendered as unrestricted HTML.
-- File uploads allow JPG/PNG/WebP only, up to 5 MB, through Laravel validation.
-- No real card transactions, vendor payments, or digital entitlement fulfillment is enabled.
-- Sessions and CSRF are Laravel-native; checkout locks stock rows inside database transactions.
+## Installer and deployment safeguards
 
-## Delivery contract
-The source repository is currently public, and all code in this branch can be read by visitors. Keep production secrets in .env files only and consider making proprietary application source private before distribution. Production at moramarket.tonsamith.com is not deployed from this code automatically.
+- The 48-character private access code is stored in storage/app/installer-access.key outside the document root.
+- HTTPS is required for remote installation credentials; web document root must resolve to public/.
+- Installer refuses preexisting database tables and refuses to replace an existing application key.
+- Install configuration is written atomically, with restrictive file permissions; do not expose the project root.
+- Final installation is serialized by a private lock, and completion locks the installer.
+- Migration failure after .env creation can require manual recovery. No destructive automated rollback is promised.
+- Buyers must receive prebuilt vendor/ dependencies and public/build/ assets. Installer pages need no terminal command.
+
+## Not yet implemented or accepted
+
+- A release ZIP with independent cPanel and aaPanel buyer-installation acceptance.
+- Video/YouTube featured media, full media transformations, Page/Post Manager, rich text HTML editor, configurable header, complex layout builder, and native-language translation coverage.
+- Secure digital download entitlement delivery, service booking and scheduling.
+- Shipping/tax rules, account ledger, refunds, commissions, vendor payouts and processor-verified payments.
+- Policy/Support Centers, notifications, license checker, authenticated updater, audit trail and backup/restore UI.
+- Compliance-grade buyer documentation, security review and marketplace acceptance.
+
+## Data protection
+
+- Public registration can create customers only; an administrator is initially created by the private installer.
+- Vendor product and order mutations are ownership-scoped. Vendor approval is required before storefront publication.
+- User-provided product descriptions are escaped, not rendered as untrusted HTML.
+- Product image uploads are validated for safe image types and size.
+- Order placements lock stock rows in a database transaction. No real-money payment gateway is active.
+
+No production deployment to moramarket.tonsamith.com was performed by these commits.
