@@ -22,4 +22,9 @@ class Vendor extends Model
     {
         return $this->hasMany(Order::class);
     }
+
+    public function shippingProfile()
+    {
+        return $this->hasOne(VendorShippingProfile::class);
+    }
 }

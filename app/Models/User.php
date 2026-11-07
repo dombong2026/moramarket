@@ -28,6 +28,11 @@ class User extends Authenticatable
         return $this->hasMany(Order::class);
     }
 
+    public function supportTickets()
+    {
+        return $this->hasMany(SupportTicket::class);
+    }
+
     public function isAdmin(): bool
     {
         return $this->role === 'admin';

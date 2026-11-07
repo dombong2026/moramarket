@@ -2,32 +2,36 @@
 
 Moramarket is a self-hosted multi-vendor marketplace for physical products, digital listings, and services.
 
-- Version: v0.0.1 — development
+- Version: v0.0.1 — active development
 - Author: Ton Samith — https://tonsamith.com
 - Website: https://moramarket.tonsamith.com
 - Product description: https://demo.tonsamith.com/moramarket
 - Documentation: https://docs.tonsamith.com/moramarket
 - Programming: Laravel 13, Tailwind CSS, Blade, JavaScript
-- License: Proprietary commercial software. Third-party libraries retain their individual licenses.
+- License: Proprietary commercial software. Third-party libraries retain their own licenses.
 
-## Current implementation
+## Implemented development modules
 
-- Laravel 13 foundation with administrator, vendor, and customer workspaces using a shared dashboard layout.
-- Public catalog, categories, physical product cart, guarded cash-on-delivery order placement, and vendor product management.
-- Responsive light/dark interfaces, centered CRUD dialogs, searches/filters and 10-item table pagination.
-- Administrator General Settings, editable homepage hero and footer-column visibility, read-only System Health.
-- Owner-scoped private Media Library image upload/view/edit/delete, reusable featured-media selection and upload preview.
-- Five-step browser installer for a prepared buyer archive, with a private access code, hosting checks, MySQL connection, site details and first-administrator provisioning.
-- Automated Laravel feature tests, Tailwind build and MySQL-powered HTTP installer CI checks.
+- Shared responsive admin/vendor/customer dashboards, role authorization, authentication, system health, settings, appearance and footer visibility.
+- Multi-vendor product listing and cash-on-delivery checkout for physical goods, category and vendor management, customer order history.
+- Five-step protected browser installer for a prebuilt release package, MySQL provisioning and initial administrator.
+- Private Media Library with images and video, metadata editing, owner scopes, featured media reuse.
+- Page/Post Manager: published/draft pages and posts, server-sanitized text editor with HTML source, SEO, revisions and restores.
+- Policy Center: versioned policies with admin CRUD and published public read pages.
+- Knowledge Base: category/article CRUD, public search, 10-item pagination and published article pages.
+- Support Center: customer tickets, threaded replies, admin response and open/closed status.
+- Vendor Delivery Settings: configurable per-vendor flat charges, free threshold and order delivery transitions.
+- Automated Laravel feature tests, JS/CSS production builds and HTTP installer acceptance in CI.
 
-## Release status
+## Release limits
 
-This is development source, not yet an accepted buyer package. Customer installation archives must include Composer vendor dependencies and compiled frontend assets. Independent cPanel/aaPanel acceptance, browser QA, security review and complete documentation are still required. Online payments, digital entitlement delivery, payouts, license verification, and automatic updates are not enabled.
+This repository is an active development build, NOT a finished CodeCanyon buyer package. Independent cPanel/aaPanel installation and upgrade, payment/legal/tax compliance, end-to-end browser review, security testing and packaging are required before release. Online payment gateways, digital entitlements, commissions/payouts, invoices/refunds, shipment carrier integrations and full 13-language translations are not active.
 
-Developer instructions: docs/DEVELOPMENT.md
-Architecture and limitations: docs/ARCHITECTURE.md
-Roadmap: docs/ROADMAP.md
+- Developer guidance: docs/DEVELOPMENT.md
+- Architecture and security: docs/ARCHITECTURE.md
+- New modules: docs/CONTENT_SUPPORT_DELIVERY.md
+- Roadmap: docs/ROADMAP.md
 
-This repository is publicly visible. Never place production secrets or user data in the repository.
+The repository is PUBLIC. Do not commit secrets, buyer credentials or real customer information.
 
 Copyright 2026 Ton Samith. All rights reserved.

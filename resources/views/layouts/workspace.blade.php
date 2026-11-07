@@ -19,17 +19,24 @@
     <a @class(['active'=>request()->routeIs('admin.vendors*')]) href="{{ route('admin.vendors') }}">@include('partials.icon',['name'=>'store']) Vendors</a>
     <a @class(['active'=>request()->routeIs('admin.orders*')]) href="{{ route('admin.orders') }}">@include('partials.icon',['name'=>'orders']) Orders</a>
     <a @class(['active'=>request()->routeIs('admin.media*')]) href="{{ route('admin.media') }}">@include('partials.icon',['name'=>'box']) Media Library</a>
+    <a @class(['active'=>request()->routeIs('admin.content.*') && request()->route('type')==='page']) href="{{ route('admin.content.index','page') }}">@include('partials.icon',['name'=>'edit']) Page Manager</a>
+    <a @class(['active'=>request()->routeIs('admin.content.*') && request()->route('type')==='post']) href="{{ route('admin.content.index','post') }}">@include('partials.icon',['name'=>'edit']) Post Manager</a>
+    <a @class(['active'=>request()->routeIs('admin.knowledge.*')]) href="{{ route('admin.knowledge.index') }}">@include('partials.icon',['name'=>'orders']) Knowledge Base</a>
+    <a @class(['active'=>request()->routeIs('admin.policies.*')]) href="{{ route('admin.policies.index') }}">@include('partials.icon',['name'=>'shield']) Policy Center</a>
+    <a @class(['active'=>request()->routeIs('admin.support.*')]) href="{{ route('admin.support.index') }}">@include('partials.icon',['name'=>'mail']) Support Center</a>
     <a @class(['active'=>request()->routeIs('admin.appearance*')]) href="{{ route('admin.appearance') }}">@include('partials.icon',['name'=>'sun']) Appearance</a>
     <a @class(['active'=>request()->routeIs('admin.settings*')]) href="{{ route('admin.settings') }}">@include('partials.icon',['name'=>'edit']) General Settings</a>
     <a @class(['active'=>request()->routeIs('admin.health')]) href="{{ route('admin.health') }}">@include('partials.icon',['name'=>'shield']) System Health</a>
   @elseif($scope==='vendor')
     <a @class(['active'=>request()->routeIs('vendor.home')]) href="{{ route('vendor.home') }}">@include('partials.icon',['name'=>'grid']) Overview</a>
+    <a @class(['active'=>request()->routeIs('vendor.shipping*')]) href="{{ route('vendor.shipping.edit') }}">@include('partials.icon',['name'=>'store']) Delivery Settings</a>
     <a @class(['active'=>request()->routeIs('vendor.products*')]) href="{{ route('vendor.products') }}">@include('partials.icon',['name'=>'box']) My Products</a>
     <a @class(['active'=>request()->routeIs('vendor.orders*')]) href="{{ route('vendor.orders') }}">@include('partials.icon',['name'=>'orders']) Store Orders</a>
     <a @class(['active'=>request()->routeIs('vendor.media*')]) href="{{ route('vendor.media') }}">@include('partials.icon',['name'=>'box']) Media Library</a>
   @else
     <a @class(['active'=>request()->routeIs('account.home')]) href="{{ route('account.home') }}">@include('partials.icon',['name'=>'grid']) Overview</a>
     <a @class(['active'=>request()->routeIs('account.orders')]) href="{{ route('account.orders') }}">@include('partials.icon',['name'=>'orders']) My Orders</a>
+    <a @class(['active'=>request()->routeIs('account.support.*')]) href="{{ route('account.support.index') }}">@include('partials.icon',['name'=>'mail']) Support Tickets</a>
   @endif
   </nav>
   <div class="sidebar-bottom"><a href="{{ route('locale.home',['locale'=>app()->getLocale()]) }}">@include('partials.icon',['name'=>'store']) View Marketplace</a><a href="{{ route('account.home') }}">@include('partials.icon',['name'=>'user']) My Account</a></div>

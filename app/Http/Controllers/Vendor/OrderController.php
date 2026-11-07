@@ -14,37 +14,55 @@ class OrderController extends Controller
     public function index(Request $request)
     {
         $request->validate([
-            'q' => ['nullable', 'string', 'max:100'],
-            'status' => ['nullable', 'in:pending,processing,shipped,completed,cancelled'],
+            'q'=>['nullable','string','max:100'],
+            'status'=>['nullable','in:pending,processing,shipped,completed,cancelled'],
         ]);
-
-        $orders = $request->user()->vendor->orders()->with(['user', 'items'])
-            ->when($request->filled('q'), fn ($q) => $q->where('number', 'like', '%'.$request->query('q').'%'))
-            ->when($request->filled('status'), fn ($q) => $q->where('status', $request->query('status')))
+        $orders=$request->user()->vendor->orders()->with(['user','items'])
+            ->when($request->filled('q'),fn($q)=>$q->where('number','like','%'.$request->q.'%'))
+            ->when($request->filled('status'),fn($q)=>$q->where('status',$request->status))
             ->latest()->paginate(10)->withQueryString();
-        return view('dashboard.orders', ['orders' => $orders, 'workspace' => 'vendor']);
+        return view('dashboard.orders',['orders'=>$orders,'workspace'=>'vendor']);
     }
 
     public function update(Request $request, Order $order)
     {
-        abort_unless($order->vendor_id === $request->user()->vendor->id, 404);
-        $data = $request->validate(['status' => ['required', 'in:processing,shipped,completed,cancelled']]);
+        abort_unless($order->vendor_id===$request->user()->vendor->id,404);
+        $data=$request->validate([
+            'status'=>['required','in:processing,shipped,completed,cancelled'],
+            'shipping_carrier'=>['nullable','string','max:100'],
+            'tracking_number'=>['nullable','string','max:120'],
+        ]);
 
-        DB::transaction(function () use ($order, $data) {
-            $order = Order::query()->lockForUpdate()->findOrFail($order->id);
-            if (in_array($order->status, ['cancelled', 'completed'], true)) {
-                throw ValidationException::withMessages(['status' => 'A final order cannot be changed.']);
+        DB::transaction(function () use ($order,$data) {
+            $locked=Order::whereKey($order->id)->lockForUpdate()->firstOrFail();
+            $transitions=[
+                'pending'=>['processing','cancelled'],
+                'processing'=>['shipped','cancelled'],
+                'shipped'=>['completed'],
+                'completed'=>[],
+                'cancelled'=>[],
+            ];
+            if (!in_array($data['status'],$transitions[$locked->status]??[],true)) {
+                throw ValidationException::withMessages(['status'=>'Invalid order transition. Advance each delivery stage in order.']);
             }
-            if ($data['status'] === 'cancelled') {
-                foreach ($order->items as $item) {
+            $updates=['status'=>$data['status']];
+            if ($data['status']==='cancelled') {
+                foreach ($locked->items as $item) {
                     if ($item->product_id) {
-                        Product::whereKey($item->product_id)->increment('stock', $item->quantity);
+                        Product::whereKey($item->product_id)->increment('stock',$item->quantity);
                     }
                 }
             }
-            $order->update(['status' => $data['status']]);
+            if ($data['status']==='shipped') {
+                $updates['shipped_at']=now();
+                $updates['shipping_carrier']=$data['shipping_carrier']??null;
+                $updates['tracking_number']=$data['tracking_number']??null;
+            }
+            if ($data['status']==='completed') {
+                $updates['delivered_at']=now();
+            }
+            $locked->update($updates);
         });
-
-        return back()->with('success', 'Order status updated.');
+        return back()->with('success','Delivery status updated.');
     }
 }

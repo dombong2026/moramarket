@@ -5,6 +5,14 @@ use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Admin\VendorController as AdminVendorController;
 use App\Http\Controllers\Admin\SettingsController;
+use App\Http\Controllers\Admin\ContentController;
+use App\Http\Controllers\Admin\PolicyController;
+use App\Http\Controllers\Admin\KnowledgeController;
+use App\Http\Controllers\ContentPublicController;
+use App\Http\Controllers\PolicyPublicController;
+use App\Http\Controllers\KnowledgePublicController;
+use App\Http\Controllers\SupportTicketController;
+use App\Http\Controllers\Vendor\ShippingController;
 use App\Http\Controllers\Auth\SessionController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
@@ -25,6 +33,18 @@ Route::get('/{locale}', [StorefrontController::class, 'home'])->where('locale', 
 Route::get('/{locale}/products', [StorefrontController::class, 'catalog'])->where('locale', $localePattern)->name('locale.catalog');
 Route::get('/{locale}/category/{category:slug}', [StorefrontController::class, 'category'])->where('locale', $localePattern)->name('locale.category');
 Route::get('/{locale}/product/{product:slug}', [StorefrontController::class, 'product'])->where('locale', $localePattern)->name('locale.product');
+Route::get('/{locale}/pages', [ContentPublicController::class, 'pages'])->where('locale', $localePattern)->name('content.pages');
+Route::get('/{locale}/blog', [ContentPublicController::class, 'blog'])->where('locale', $localePattern)->name('content.blog');
+Route::get('/{locale}/{type}/{entry:slug}', [ContentPublicController::class, 'show'])
+    ->where(['locale'=>$localePattern,'type'=>'page|post'])->name('content.show');
+Route::get('/content-media/{type}/{entry}', [ContentPublicController::class, 'featuredMedia'])
+    ->where('type','page|post')->name('content.featured');
+
+Route::get('/policies', [PolicyPublicController::class, 'index'])->name('policies.index');
+Route::get('/policies/{policy:slug}', [PolicyPublicController::class, 'show'])->name('policies.show');
+Route::get('/support-center', [KnowledgePublicController::class, 'index'])->name('knowledge.index');
+Route::get('/support-center/article/{article:slug}', [KnowledgePublicController::class, 'show'])->name('knowledge.show');
+
 Route::get('/language/{locale}', function (Request $request, string $locale) {
     $request->session()->put('locale', $locale);
     return redirect()->route('locale.home', ['locale' => $locale]);
@@ -58,6 +78,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/account/orders', [AccountController::class, 'orders'])->name('account.orders');
     Route::patch('/account/profile', [AccountController::class, 'updateProfile'])->name('account.profile.update');
     Route::post('/account/vendor-application', [AccountController::class, 'apply'])->name('account.vendor.apply');
+    Route::get('/account/support', [SupportTicketController::class, 'customerIndex'])->name('account.support.index');
+    Route::post('/account/support', [SupportTicketController::class, 'store'])
+        ->middleware('throttle:10,1')->name('account.support.store');
+    Route::get('/account/support/{ticket}', [SupportTicketController::class, 'show'])->name('account.support.show');
+    Route::post('/account/support/{ticket}/reply', [SupportTicketController::class, 'reply'])
+        ->middleware('throttle:15,1')->name('account.support.reply');
 
     Route::prefix('dashboard')->name('admin.')->middleware('role:admin')->group(function () {
         Route::get('/', [WorkspaceController::class, 'admin'])->name('home');
@@ -68,6 +94,31 @@ Route::middleware('auth')->group(function () {
         Route::get('/vendors', [AdminVendorController::class, 'index'])->name('vendors');
         Route::patch('/vendors/{vendor}', [AdminVendorController::class, 'changeStatus'])->name('vendors.status');
         Route::get('/orders', [AdminOrderController::class, 'index'])->name('orders');
+
+        Route::get('/content/{type}', [ContentController::class, 'index'])->where('type','page|post')->name('content.index');
+        Route::post('/content/{type}', [ContentController::class, 'store'])->where('type','page|post')->name('content.store');
+        Route::patch('/content/{type}/{entry}', [ContentController::class, 'update'])->where('type','page|post')->name('content.update');
+        Route::delete('/content/{type}/{entry}', [ContentController::class, 'destroy'])->where('type','page|post')->name('content.delete');
+        Route::get('/content/{type}/{entry}/revisions', [ContentController::class, 'revisions'])->where('type','page|post')->name('content.revisions');
+        Route::post('/content/{type}/{entry}/restore/{revision}', [ContentController::class, 'restore'])->where('type','page|post')->name('content.restore');
+
+        Route::get('/policies', [PolicyController::class, 'index'])->name('policies.index');
+        Route::post('/policies', [PolicyController::class, 'store'])->name('policies.store');
+        Route::patch('/policies/{policy}', [PolicyController::class, 'update'])->name('policies.update');
+        Route::delete('/policies/{policy}', [PolicyController::class, 'destroy'])->name('policies.delete');
+
+        Route::get('/knowledge', [KnowledgeController::class, 'index'])->name('knowledge.index');
+        Route::post('/knowledge', [KnowledgeController::class, 'store'])->name('knowledge.store');
+        Route::patch('/knowledge/{article}', [KnowledgeController::class, 'update'])->name('knowledge.update');
+        Route::delete('/knowledge/{article}', [KnowledgeController::class, 'destroy'])->name('knowledge.delete');
+        Route::post('/knowledge/categories', [KnowledgeController::class, 'storeCategory'])->name('knowledge.category.store');
+        Route::patch('/knowledge/categories/{category}', [KnowledgeController::class, 'updateCategory'])->name('knowledge.category.update');
+        Route::delete('/knowledge/categories/{category}', [KnowledgeController::class, 'deleteCategory'])->name('knowledge.category.delete');
+
+        Route::get('/support', [SupportTicketController::class, 'adminIndex'])->name('support.index');
+        Route::get('/support/{ticket}', [SupportTicketController::class, 'show'])->name('support.show');
+        Route::post('/support/{ticket}/reply', [SupportTicketController::class, 'reply'])->name('support.reply');
+        Route::patch('/support/{ticket}/status', [SupportTicketController::class, 'status'])->name('support.status');
         Route::get('/settings', [SettingsController::class, 'general'])->name('settings');
         Route::patch('/settings', [SettingsController::class, 'saveGeneral'])->name('settings.update');
         Route::get('/appearance', [SettingsController::class, 'appearance'])->name('appearance');
@@ -81,6 +132,8 @@ Route::middleware('auth')->group(function () {
 
     Route::prefix('vendor')->name('vendor.')->middleware('role:vendor')->group(function () {
         Route::get('/', [WorkspaceController::class, 'vendor'])->name('home');
+        Route::get('/shipping', [ShippingController::class, 'edit'])->name('shipping.edit');
+        Route::patch('/shipping', [ShippingController::class, 'update'])->name('shipping.update');
         Route::get('/products', [ProductController::class, 'index'])->name('products');
         Route::post('/products', [ProductController::class, 'store'])->name('products.store');
         Route::patch('/products/{product}', [ProductController::class, 'update'])->name('products.update');

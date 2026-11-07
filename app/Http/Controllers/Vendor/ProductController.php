@@ -27,7 +27,7 @@ class ProductController extends Controller
             ->when($request->filled('status'), fn ($q) => $q->where('status', $request->query('status')))
             ->latest()->paginate(10)->withQueryString();
         $categories = Category::where('is_active', true)->orderBy('name')->get();
-        $mediaAssets = MediaAsset::where('user_id', $request->user()->id)->latest()->limit(100)->get();
+        $mediaAssets = MediaAsset::where('user_id', $request->user()->id)->where('mime_type','like','image/%')->latest()->limit(100)->get();
 
         return view('dashboard.products', compact('products', 'categories', 'mediaAssets'));
     }
@@ -87,7 +87,7 @@ class ProductController extends Controller
             $data['featured_media_id'] = $asset->id;
             $data['image_path'] = $asset->path;
         } elseif (! empty($data['media_id'])) {
-            $asset = MediaAsset::where('user_id', $request->user()->id)->findOrFail($data['media_id']);
+            $asset = MediaAsset::where('user_id', $request->user()->id)->where('mime_type','like','image/%')->findOrFail($data['media_id']);
             $data['featured_media_id'] = $asset->id;
             $data['image_path'] = $asset->path;
         } elseif ($request->boolean('remove_image')) {
@@ -109,7 +109,7 @@ class ProductController extends Controller
             'stock' => ['required', 'integer', 'min:0', 'max:100000000'],
             'status' => ['required', 'in:draft,published'],
             'image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
-            'media_id' => ['nullable', 'integer', Rule::exists('media_assets', 'id')->where('user_id', $request->user()->id)],
+            'media_id' => ['nullable', 'integer', Rule::exists('media_assets', 'id')->where('user_id', $request->user()->id)->where('mime_type','like','image/%')],
             'remove_image' => ['nullable', 'boolean'],
         ]);
     }
