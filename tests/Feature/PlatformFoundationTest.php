@@ -16,6 +16,19 @@ class PlatformFoundationTest extends TestCase
 {
     use RefreshDatabase;
 
+    public function test_all_controller_routes_resolve_to_real_classes_and_methods(): void
+    {
+        foreach (\Illuminate\Support\Facades\Route::getRoutes() as $route) {
+            $action=$route->getActionName();
+            if (!str_contains($action,'@')) {
+                continue;
+            }
+            [$class,$method]=explode('@',$action,2);
+            $this->assertTrue(class_exists($class),'Missing controller: '.$class);
+            $this->assertTrue(method_exists($class,$method),'Missing action: '.$action);
+        }
+    }
+
     public function test_all_workspace_navigation_entries_have_distinct_real_route_urls(): void
     {
         foreach (['admin','vendor','account'] as $workspace) {
