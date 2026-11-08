@@ -17,6 +17,18 @@ jobs:
           php-version: '8.4'
           extensions: mbstring, dom, ctype, curl, fileinfo, gd, pdo_sqlite, sqlite3, pdo_mysql, xml
           coverage: none
+      - name: Validate read-only aaPanel environment audit
+        run: |
+          bash -n support/aapanel-readonly-audit.sh
+          bash support/aapanel-readonly-audit.sh --help
+          BEFORE="$(git status --porcelain --untracked-files=normal)"
+          REPORT="$(bash support/aapanel-readonly-audit.sh --ci)"
+          printf '%s\n' "$REPORT"
+          grep -qx 'MORAMARKET_AUDIT_MODE=READ_ONLY' <<< "$REPORT"
+          grep -qx 'DATABASE=NOT_CONNECTED' <<< "$REPORT"
+          grep -qx 'SERVER_CONFIG=NOT_MODIFIED' <<< "$REPORT"
+          grep -qx 'RELEASE_READY=NO' <<< "$REPORT"
+          test "$BEFORE" = "$(git status --porcelain --untracked-files=normal)"
       - name: Install Composer dependencies
         run: composer install --no-interaction --prefer-dist --no-progress
       - name: Prepare environment

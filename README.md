@@ -31,6 +31,7 @@ This repository is an active development build, NOT a finished CodeCanyon buyer 
 
 - Developer guidance: docs/DEVELOPMENT.md
 - Safe aaPanel/GitHub source sync: docs/AAPANEL_GITHUB_SYNC.md
+- Read-only aaPanel environment and architecture audit: docs/AAPANEL_READONLY_AUDIT.md
 - Architecture and security: docs/ARCHITECTURE.md
 - Shared frontend/backend/security standard: docs/ARCHITECTURE_REUSABLE_UI.md
 - Security Center and audit privacy model: docs/SECURITY_CENTER.md

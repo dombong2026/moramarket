@@ -1,42 +1,43 @@
-# Moramarket v0.0.1 Architecture
+# Moramarket Laravel 13 Architecture — Actual Development Scope
 
-## Implemented
+Project status: active v0.0.1 source development, not an independently accepted commercial marketplace release.
 
-- Laravel 13 and PHP 8.3+, Tailwind CSS 4, Blade and Vite.
-- Laravel authentication, CSRF, throttled login/registration/reset flows and role-scoped workspaces.
-- Administrator categories, vendor approval, order review, General Settings, homepage/footer Appearance, and read-only System Health checks.
-- Vendor product CRUD, image uploads and protected order management; customer profile, vendor applications and order history.
-- Public catalog, stock-locked multi-vendor COD physical product checkout. Digital products and services are listing-only.
-- A private image-only Media Library with role-scoped upload, view, metadata editing and deletion; product featured-media reuse and deletion safeguards. Media files use the private Laravel local disk, and controlled image streaming avoids public/storage symlinks.
-- Locale-prefixed public URLs for 13 languages, language preference detection only. Full translations are not implemented.
-- Standalone five-step PHP installer before Laravel bootstrap, private access key, CSRF, prepared package preflight, empty MySQL database verification, private .env generation, framework migrations, first admin, and an installer lock file.
-- Automated PHPUnit checks, frontend build and CI MySQL-powered HTTP installer acceptance.
+## Implemented and covered by GitHub CI
 
-## Installer and deployment safeguards
+- Laravel 13 / PHP 8.3+, shared responsive Blade/Tailwind/Vite layout, centralized navigation, reusable table filtering and 3-dot actions.
+- Authentication, self-registration of customers, password recovery broker, session regeneration, role restrictions, CSRF and route throttling.
+- Administrator modules for categories, vendors, orders, CMS page/post revisions, policy publishing, knowledge articles, support cases, settings, appearance, media and Security Center audits.
+- Approved vendor workspace with product editing, private media, order management, flat-rate shipping and delivery transitions.
+- Customer profile, vendor application, order history, support tickets and stock-locked physical-product cash-on-delivery checkout.
+- Public storefront with category/product listings, page/blog content, public policies, and searchable knowledge.
+- Private storage and role/ownership checks, HTML sanitization, selected HTTP response security headers and audit event metadata.
+- Standalone five-step installer for a new empty MySQL database, access-code protection and installer lockout; isolated MySQL 8 HTTP installer smoke checks in GitHub CI.
 
-- The 48-character private access code is stored in storage/app/installer-access.key outside the document root.
-- HTTPS is required for remote installation credentials; web document root must resolve to public/.
-- Installer refuses preexisting database tables and refuses to replace an existing application key.
-- Install configuration is written atomically, with restrictive file permissions; do not expose the project root.
-- Final installation is serialized by a private lock, and completion locks the installer.
-- Migration failure after .env creation can require manual recovery. No destructive automated rollback is promised.
-- Buyers must receive prebuilt vendor/ dependencies and public/build/ assets. Installer pages need no terminal command.
+## Reusable architecture
 
-## Not yet implemented or accepted
+| Layer | Primary source |
+| --- | --- |
+| Routing and middleware | routes/web.php, bootstrap/app.php, app/Http/Middleware |
+| Authentication and normalization | app/Http/Controllers/Auth, app/Support/EmailNormalizer.php |
+| Workspaces | app/Http/Controllers/Admin, Vendor, Account, Dashboard |
+| Business models and services | app/Models, app/Services |
+| Shared UI and navigation | resources/views/components/ui, resources/views/partials, app/Support/WorkspaceNavigation.php |
+| Shared frontend assets | resources/css/app.css, resources/js/app.js |
+| Storage and migrations | config/filesystems.php, config/database.php, database/migrations |
+| Browser installer | public/installer/index.php |
+| Testing | tests/Feature, support/qa-installer.sh, .github/workflows/ci.yml |
+| Safe host diagnostics | support/aapanel-sync.sh, support/aapanel-readonly-audit.sh |
 
-- A release ZIP with independent cPanel and aaPanel buyer-installation acceptance.
-- Video/YouTube featured media, full media transformations, Page/Post Manager, rich text HTML editor, configurable header, complex layout builder, and native-language translation coverage.
-- Secure digital download entitlement delivery, service booking and scheduling.
-- Shipping/tax rules, account ledger, refunds, commissions, vendor payouts and processor-verified payments.
-- Policy/Support Centers, notifications, license checker, authenticated updater, audit trail and backup/restore UI.
-- Compliance-grade buyer documentation, security review and marketplace acceptance.
+## Open gates and architectural limits
 
-## Data protection
+- Digital items and services are listings only; paid digital download entitlement and service booking lifecycle are not complete.
+- Online payments, refunds, invoices/taxes, commissions, vendor payouts and settlement are not operational or certified.
+- Thirteen language URL choices are not equivalent to completed UI/legal translations.
+- SMTP, browser/mobile QA, scheduling/queues, full customer installation/upgrade/restore, security/legal/rights checks and support acceptance are incomplete.
+- No approved customer ZIP, commercial license verification and updater; the buyer needs precompiled vendor/ and public/build/.
+- composer.lock and package-lock.json are missing; reproducible dependency locking is required.
+- GitHub repository is public despite proprietary licensing; review distribution/visibility.
 
-- Public registration can create customers only; an administrator is initially created by the private installer.
-- Vendor product and order mutations are ownership-scoped. Vendor approval is required before storefront publication.
-- User-provided product descriptions are escaped, not rendered as untrusted HTML.
-- Product image uploads are validated for safe image types and size.
-- Order placements lock stock rows in a database transaction. No real-money payment gateway is active.
+GitHub CI is not a production-readiness certificate. Host auditing is deliberately non-invasive and cannot approve a deployment.
 
-No production deployment to moramarket.tonsamith.com was performed by these commits.
+See docs/AAPANEL_READONLY_AUDIT.md and docs/AAPANEL_GITHUB_SYNC.md.
