@@ -123,7 +123,7 @@ def interactions(page, role, viewport):
     if role == "public":
         page.goto(BASE + "/en/products", wait_until="networkidle")
         page.locator("#catalog-query").fill("Bluetooth")
-        page.locator('form[action$="/products"] button[type="submit"]').click()
+        page.locator('form.panel button[type="submit"]').click()
         check("q=Bluetooth" in page.url, f"{viewport} catalog filter submission")
         stats["interaction_checks"] += 1
         return
