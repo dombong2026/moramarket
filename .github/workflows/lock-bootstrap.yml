@@ -45,6 +45,7 @@ jobs:
           for file in composer.lock package-lock.json; do
             echo "LOCK_BEGIN $file"
             base64 -w0 "$file" | fold -w 1800 | sed "s/^/LOCK_B64 $file /"
+            echo
             echo "LOCK_END $file"
             sha256sum "$file"
           done
