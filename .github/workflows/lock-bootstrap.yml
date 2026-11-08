@@ -25,7 +25,7 @@ jobs:
       - name: Resolve and validate dependency locks
         run: |
           set -Eeuo pipefail
-          composer update --no-install --no-interaction --prefer-dist --no-progress
+          composer update --no-install --no-scripts --no-interaction --prefer-dist --no-progress
           npm install --package-lock-only --ignore-scripts --no-audit --no-fund
           test -s composer.lock
           test -s package-lock.json
