@@ -1,0 +1,59 @@
+name: Resolve initial dependency lockfiles
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  bootstrap-locks:
+    if: github.repository == 'dombong2026/moramarket'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up PHP 8.4
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: mbstring, dom, ctype, curl, fileinfo, gd, pdo_sqlite, sqlite3, pdo_mysql, xml, intl, zip
+          coverage: none
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Resolve and validate dependency locks
+        run: |
+          set -Eeuo pipefail
+          composer update --no-install --no-interaction --prefer-dist --no-progress
+          npm install --package-lock-only --ignore-scripts --no-audit --no-fund
+          test -s composer.lock
+          test -s package-lock.json
+          composer validate --no-check-publish
+          composer install --no-interaction --prefer-dist --no-progress
+          npm ci --ignore-scripts --no-audit --no-fund
+          cp .env.example .env
+          php artisan key:generate
+          php artisan test --compact
+          npm run build
+          git status --short
+      - name: Export verified lockfiles through Actions log
+        run: |
+          set -Eeuo pipefail
+          # No secrets: these are public manifests only. Each line is <2 KiB
+          # so the GitHub Actions log API does not truncate large JSON lines.
+          for file in composer.lock package-lock.json; do
+            echo "LOCK_BEGIN $file"
+            base64 -w0 "$file" | fold -w 1800 | sed "s/^/LOCK_B64 $file /"
+            echo "LOCK_END $file"
+            sha256sum "$file"
+          done
+      - name: Retain verified lockfiles as an Actions artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: moramarket-verified-dependency-locks
+          path: |
+            composer.lock
+            package-lock.json
+          if-no-files-found: error
+          retention-days: 7
