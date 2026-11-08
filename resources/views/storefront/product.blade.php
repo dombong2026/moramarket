@@ -10,6 +10,23 @@
       @if($product->stock > 0)<p class="muted" style="margin-top:20px">{{ $product->stock }} in stock</p><form class="detail-form" action="{{ route('cart.add',$product) }}" method="POST">@csrf<div><label class="field-label" for="quantity">Quantity</label><input type="number" name="quantity" id="quantity" class="field" min="1" max="{{ min(99,$product->stock) }}" value="1" required></div><button class="btn btn-primary" type="submit">@include('partials.icon',['name'=>'cart']) Add to Cart</button></form>
       @else<p class="alert" style="margin-top:18px">Currently out of stock.</p>@endif
    @else<p class="alert" style="margin-top:20px">This listing is currently informational. Secure checkout for digital products and services is not yet enabled.</p>@endif
+   <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:20px">
+     @auth
+       @php($isWishlisted = auth()->user()->wishlistProducts()->where('products.id', $product->id)->exists())
+       @if($isWishlisted)
+         <form action="{{ route('account.wishlist.destroy',$product) }}" method="POST">@csrf @method('DELETE')
+           <button type="submit" class="btn btn-outline">Remove from Wishlist</button>
+         </form>
+       @else
+         <form action="{{ route('account.wishlist.store',$product) }}" method="POST">@csrf
+           <button type="submit" class="btn btn-outline">Save to Wishlist</button>
+         </form>
+       @endif
+       <a href="{{ route('account.wishlist.index') }}" class="text-link">My Wishlist</a>
+     @else
+       <a href="{{ route('login') }}" class="btn btn-outline">Sign in to save product</a>
+     @endauth
+   </div>
    </div>
  </div>
 </div>

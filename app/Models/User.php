@@ -28,6 +28,11 @@ class User extends Authenticatable
         return $this->hasMany(Order::class);
     }
 
+    public function wishlistProducts()
+    {
+        return $this->belongsToMany(Product::class, 'wishlist_items')->withTimestamps();
+    }
+
     public function supportTickets()
     {
         return $this->hasMany(SupportTicket::class);

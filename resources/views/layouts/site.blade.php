@@ -30,6 +30,7 @@
           @if(auth()->user()->isAdmin())<a href="{{ route('admin.home') }}">Admin Dashboard</a>@endif
           @if(auth()->user()->isApprovedVendor())<a href="{{ route('vendor.home') }}">Vendor Dashboard</a>@endif
           <a href="{{ route('account.orders') }}">My Orders</a>
+          <a href="{{ route('account.wishlist.index') }}">Saved Products</a>
           <form action="{{ route('logout') }}" method="POST">@csrf<button type="submit">Sign out</button></form>
           @else
           <a href="{{ route('login') }}">Sign In</a><a href="{{ route('register') }}">Sign Up</a>
@@ -53,7 +54,7 @@
  <div class="container footer-columns">
   @if(($ui->get('footer_brand_enabled','1')) === '1')<div><h3>{{ $ui->get('site_name','Moramarket') }}</h3><p>{{ $ui->get('site_tagline','A multi-vendor marketplace for products and services.') }}</p></div>@endif
   @if(($ui->get('footer_market_enabled','1')) === '1')<div><h3>Explore</h3><a href="{{ route('locale.catalog',['locale'=>app()->getLocale()]) }}">Browse products</a><a href="{{ route('cart.index') }}">My cart</a><a href="{{ route('content.pages',app()->getLocale()) }}">Pages</a><a href="{{ route('content.blog',app()->getLocale()) }}">Blog</a></div>@endif
-  @if(($ui->get('footer_account_enabled','1')) === '1')<div><h3>Account</h3><a href="{{ route('account.home') }}">Dashboard</a><a href="{{ route('account.orders') }}">Orders</a><a href="{{ route('knowledge.index') }}">Support Center</a><a href="{{ route('policies.index') }}">Policies</a></div>@endif
+  @if(($ui->get('footer_account_enabled','1')) === '1')<div><h3>Account</h3><a href="{{ route('account.home') }}">Dashboard</a><a href="{{ route('account.orders') }}">Orders</a><a href="{{ route('account.wishlist.index') }}">Saved Products</a><a href="{{ route('knowledge.index') }}">Support Center</a><a href="{{ route('policies.index') }}">Policies</a></div>@endif
   @if(($ui->get('footer_languages_enabled','1')) === '1')<div><h3>Languages</h3><div class="language-links">@foreach(['en'=>'English','zh'=>'中文','ko'=>'한국어','ja'=>'日本語','de'=>'Deutsch','km'=>'ខ្មែរ','vi'=>'Tiếng Việt','th'=>'ไทย','id'=>'Indonesia','ms'=>'Melayu','ar'=>'العربية','fr'=>'Français','es'=>'Español'] as $code=>$name)<a @class(['is-selected'=>app()->getLocale()===$code]) lang="{{ $code }}" href="{{ route('language.choose',['locale'=>$code]) }}">{{ $name }}</a>@endforeach</div></div>@endif
  </div>
  <div class="footer-bottom"><div class="container footer-bottom-inner"><span>Copyright © {{ date('Y') }} · {{ $ui->get('site_name','Moramarket') }}</span><span>Built by <a href="https://tonsamith.com" rel="noopener">Ton Samith</a></span></div></div>

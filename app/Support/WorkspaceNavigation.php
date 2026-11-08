@@ -43,6 +43,7 @@ final class WorkspaceNavigation
             default => [
                 ['Overview', 'grid', 'account.home', [], 'account.home'],
                 ['My Orders', 'orders', 'account.orders', [], 'account.orders'],
+                ['Saved Products', 'box', 'account.wishlist.index', [], 'account.wishlist.*'],
                 ['Notifications', 'mail', 'account.notifications.index', [], 'account.notifications.*'],
                 ['Support Tickets', 'mail', 'account.support.index', [], 'account.support.*'],
             ],

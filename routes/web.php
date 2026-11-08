@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Account\AccountController;
 use App\Http\Controllers\Account\NotificationController;
+use App\Http\Controllers\Account\WishlistController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Admin\VendorController as AdminVendorController;
@@ -78,6 +79,9 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/account', [AccountController::class, 'home'])->name('account.home');
     Route::get('/account/orders', [AccountController::class, 'orders'])->name('account.orders');
+    Route::get('/account/wishlist', [WishlistController::class, 'index'])->name('account.wishlist.index');
+    Route::post('/account/wishlist/{product}', [WishlistController::class, 'store'])->middleware('throttle:30,1')->name('account.wishlist.store');
+    Route::delete('/account/wishlist/{product}', [WishlistController::class, 'destroy'])->middleware('throttle:30,1')->name('account.wishlist.destroy');
     Route::get('/account/notifications', [NotificationController::class, 'index'])->name('account.notifications.index');
     Route::post('/account/notifications/read-all', [NotificationController::class, 'markAllRead'])->name('account.notifications.read-all');
     Route::post('/account/notifications/{notification}/read', [NotificationController::class, 'markRead'])->name('account.notifications.read');

@@ -10,6 +10,7 @@
 6. Policy Center, Knowledge Base and customer/admin support-ticket workflows.
 7. Flat vendor delivery fees, free threshold, per-vendor checkout breakdown and delivery tracking workflow.
 8. Shared Laravel architecture: role-scoped navigation, fixed table-query service, common modal/action components, CSP and admin security audit trail.
+9. Customer Saved Products / Wishlist: account-specific persistence, public product detail save/remove, unavailable-listing controls and feature tests.
 
 ## Before release
 

@@ -17,8 +17,9 @@ class AccountController extends Controller
     {
         $user = $request->user()->load('vendor');
         $ordersCount = $user->orders()->count();
+        $wishlistCount = $user->wishlistProducts()->count();
         $recentOrders = $user->orders()->with('vendor')->latest()->limit(5)->get();
-        return view('dashboard.account', compact('user', 'ordersCount', 'recentOrders'));
+        return view('dashboard.account', compact('user', 'ordersCount', 'wishlistCount', 'recentOrders'));
     }
 
     public function orders(Request $request)

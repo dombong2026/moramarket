@@ -7,6 +7,7 @@
 @section('content')
 <div class="metric-grid">
  <div class="metric-card"><small>My orders</small><strong>{{ number_format($ordersCount) }}</strong></div>
+ <div class="metric-card"><small>Saved products</small><strong><a href="{{ route('account.wishlist.index') }}">{{ number_format($wishlistCount) }}</a></strong></div>
  <div class="metric-card"><small>Account type</small><strong style="font-size:23px;text-transform:capitalize">{{ $user->role }}</strong></div>
  <div class="metric-card"><small>Vendor application</small><strong style="font-size:21px;text-transform:capitalize">{{ $user->vendor?->status ?? 'Not applied' }}</strong></div>
 </div>

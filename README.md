@@ -24,6 +24,7 @@ Moramarket is a self-hosted multi-vendor marketplace for physical products, digi
 - Support Center: customer tickets, threaded replies, admin response and open/closed status.
 - Vendor Delivery Settings: configurable per-vendor flat charges, free threshold and order delivery transitions.
 - In-app Notifications: own-user inbox, unread counts, and support/order status events without unverified email delivery.
+- Private customer wishlists: save/remove visible products, per-user isolation, and safe unavailable-listing management.
 - Automated Laravel feature tests across PHP 8.3, 8.4 and 8.5, locked JS/CSS builds, a fresh-archive MySQL installer test and nonproduction QA ZIP artifacts in GitHub Actions.
 
 ## Release limits
