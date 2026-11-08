@@ -10,8 +10,8 @@ Development version v0.0.1. Not yet an accepted public customer release.
 
 ## Developer setup
 
-1. Install dependencies on a trusted development machine using composer install.
-2. Build frontend assets using npm install --ignore-scripts and npm run build.
+1. Install dependencies on a trusted development machine using composer install (from the committed composer.lock).
+2. Install frontend assets with npm ci --ignore-scripts and run npm run build (from the committed package-lock.json).
 3. For local development configure .env, generate APP_KEY, and migrate/seed via Artisan.
 4. Run php artisan test; CI also runs the standalone installer smoke test with MySQL.
 

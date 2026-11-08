@@ -46,8 +46,8 @@ The script always reports RELEASE_READY=NO because commercial acceptance is sepa
 - package.json uses Vite ^8 and Tailwind CSS ^4.
 - GitHub feature tests, frontend production build and isolated MySQL 8 HTTP installer tests passed in previous runs.
 - Source includes admin, vendor and customer controllers; login and password reset; product/COD ordering; private media; pages/posts; policies; knowledge base; support; and admin security audit events.
-- No composer.lock or package-lock.json is committed. Lockfile generation and review must precede buyer packaging.
-- A source clone has no vendor/autoload.php or public/build/manifest.json. A standalone buyer release must include both.
+- composer.lock and package-lock.json have now been committed after isolated CI resolution for the minimum supported PHP 8.3 platform; subsequent CI runs must install from those locks.
+- A source clone has no vendor/autoload.php or public/build/manifest.json. The CI-built QA ZIP includes both, but independent acceptance and buyer release are still pending.
 - The current repository is publicly visible while its license is proprietary. Visibility and distribution require deliberate review.
 
 As a correction to the initial audit, Composer 2.2.6 is Composer 2 and is compatible with the major-version check; the original helper incorrectly expected the phrase 'Composer version 2.x'. The host should not upgrade system Composer merely to clear this reporting error. If Node or npm are not in the shell PATH, that does not prove they are absent from the host; prebuilt releases should not depend on a server-side Node installation.\n\n## Release acceptance prerequisites

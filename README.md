@@ -23,7 +23,7 @@ Moramarket is a self-hosted multi-vendor marketplace for physical products, digi
 - Knowledge Base: category/article CRUD, public search, 10-item pagination and published article pages.
 - Support Center: customer tickets, threaded replies, admin response and open/closed status.
 - Vendor Delivery Settings: configurable per-vendor flat charges, free threshold and order delivery transitions.
-- Automated Laravel feature tests, JS/CSS production builds and HTTP installer acceptance in CI.
+- Automated Laravel feature tests across PHP 8.3, 8.4 and 8.5, locked JS/CSS builds, a fresh-archive MySQL installer test and nonproduction QA ZIP artifacts in GitHub Actions.
 
 ## Release limits
 
@@ -32,6 +32,7 @@ This repository is an active development build, NOT a finished CodeCanyon buyer 
 - Developer guidance: docs/DEVELOPMENT.md
 - Safe aaPanel/GitHub source sync: docs/AAPANEL_GITHUB_SYNC.md
 - Read-only aaPanel environment and architecture audit: docs/AAPANEL_READONLY_AUDIT.md
+- Reproducible dependency and QA ZIP pipeline: docs/REPRODUCIBLE_RELEASE.md
 - Architecture and security: docs/ARCHITECTURE.md
 - Shared frontend/backend/security standard: docs/ARCHITECTURE_REUSABLE_UI.md
 - Security Center and audit privacy model: docs/SECURITY_CENTER.md

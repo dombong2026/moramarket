@@ -34,8 +34,8 @@ Project status: active v0.0.1 source development, not an independently accepted 
 - Online payments, refunds, invoices/taxes, commissions, vendor payouts and settlement are not operational or certified.
 - Thirteen language URL choices are not equivalent to completed UI/legal translations.
 - SMTP, browser/mobile QA, scheduling/queues, full customer installation/upgrade/restore, security/legal/rights checks and support acceptance are incomplete.
-- No approved customer ZIP, commercial license verification and updater; the buyer needs precompiled vendor/ and public/build/.
-- composer.lock and package-lock.json are missing; reproducible dependency locking is required.
+- GitHub CI builds a nonproduction QA ZIP containing production vendor/ and compiled public/build/ and tests it in an extracted directory with isolated MySQL. No approved buyer ZIP, commercial license verification or updater exists yet.
+- composer.lock and package-lock.json are committed and verified. CI uses composer install and npm ci (no dependency resolution) on the supported PHP range.
 - GitHub repository is public despite proprietary licensing; review distribution/visibility.
 
 GitHub CI is not a production-readiness certificate. Host auditing is deliberately non-invasive and cannot approve a deployment.

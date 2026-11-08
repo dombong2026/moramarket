@@ -36,8 +36,16 @@ jobs:
           [[ 'Composer 2.2.6 2022-02-04 17:00:38' =~ $banner_pattern ]]
           [[ 'Composer version 2.9.2 2026-01-01 00:00:00' =~ $banner_pattern ]]
           ! [[ 'Composer version 1.10.30' =~ $banner_pattern ]]
-      - name: Install Composer dependencies
-        run: composer install --no-interaction --prefer-dist --no-progress
+      - name: Require committed, validated dependency locks
+        run: |
+          test -s composer.lock
+          test -s package-lock.json
+          composer validate --no-check-publish
+      - name: Install Composer exclusively from lock
+        run: |
+          composer install --no-interaction --prefer-dist --no-progress
+          composer check-platform-reqs
+
       - name: Prepare environment
         run: |
           cp .env.example .env
@@ -57,12 +65,39 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
-      - name: Install frontend dependencies
-        run: npm install --ignore-scripts
+      - name: Install locked frontend dependencies
+        run: npm ci --ignore-scripts --no-audit --no-fund
       - name: Check shared JavaScript syntax
         run: node --check resources/js/app.js
       - name: Build Tailwind assets
-        run: npm run build
+        run: |
+          npm run build
+          git diff --exit-code -- composer.lock package-lock.json
+
+  compatibility-php83:
+    name: PHP 8.3 Compatibility
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up PHP 8.3
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: mbstring, dom, ctype, curl, fileinfo, gd, pdo_sqlite, sqlite3, pdo_mysql, xml, intl, zip
+          coverage: none
+      - name: Verify locked dependency compatibility and PHP 8.3 platform
+        run: |
+          test -s composer.lock
+          composer install --no-interaction --prefer-dist --no-progress
+          composer check-platform-reqs
+      - name: Run complete Laravel tests and compile templates
+        run: |
+          cp .env.example .env
+          php artisan key:generate
+          php artisan test --compact
+          php artisan view:cache
+          php artisan route:list --json >/tmp/moramarket-php83-routes.json
+          git diff --exit-code -- composer.lock
 
   compatibility-php85:
     name: PHP 8.5 Compatibility
@@ -75,8 +110,11 @@ jobs:
           php-version: '8.5'
           extensions: mbstring, dom, ctype, curl, fileinfo, gd, pdo_sqlite, sqlite3, pdo_mysql, xml, intl, zip
           coverage: none
-      - name: Install locked-or-resolved Composer dependencies
-        run: composer install --no-interaction --prefer-dist --no-progress
+      - name: Install locked Composer dependencies
+        run: |
+          test -s composer.lock
+          composer install --no-interaction --prefer-dist --no-progress
+          composer check-platform-reqs
       - name: Set up test environment
         run: |
           cp .env.example .env
@@ -118,7 +156,70 @@ jobs:
       - name: Prepare application package dependencies
         run: |
           composer install --no-interaction --prefer-dist --no-progress
-          npm install --ignore-scripts
+          npm ci --ignore-scripts --no-audit --no-fund
           npm run build
       - name: Check standalone installer
         run: php -l public/installer/index.php && bash support/qa-installer.sh
+
+
+  qa-candidate-package:
+    name: Self-contained QA ZIP and independent MySQL installer
+    needs: [test, compatibility-php83, compatibility-php85, installer]
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: CI_root_password_891
+          MYSQL_DATABASE: moramarket_install_ci
+          MYSQL_USER: moramarket_ci
+          MYSQL_PASSWORD: CI_DB_Password_891
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping --silent"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up PHP 8.3 for buyer-minimum runtime
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: mbstring, dom, ctype, curl, fileinfo, gd, pdo_mysql, xml, intl, zip
+          coverage: none
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Compile locked production dependencies and assets
+        run: |
+          set -Eeuo pipefail
+          test -s composer.lock && test -s package-lock.json
+          composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader --no-progress
+          composer check-platform-reqs --no-dev
+          npm ci --ignore-scripts --no-audit --no-fund
+          npm run build
+          git diff --exit-code -- composer.lock package-lock.json
+      - name: Verify packaging tools and build isolated ZIP
+        run: |
+          set -Eeuo pipefail
+          bash -n support/build-qa-package.sh
+          bash -n support/qa-candidate-package.sh
+          OUT="$RUNNER_TEMP/moramarket-qa-$GITHUB_SHA.zip"
+          bash support/build-qa-package.sh "$OUT"
+          echo "MORAMARKET_QA_ARCHIVE=$OUT" >> "$GITHUB_ENV"
+      - name: Verify extracted package and new installation
+        run: |
+          set -Eeuo pipefail
+          bash support/qa-candidate-package.sh "$MORAMARKET_QA_ARCHIVE"
+          sha256sum "$MORAMARKET_QA_ARCHIVE" > "$MORAMARKET_QA_ARCHIVE.sha256"
+      - name: Retain nonproduction QA candidate archive
+        uses: actions/upload-artifact@v4
+        with:
+          name: moramarket-QA-NOT-FOR-PRODUCTION
+          path: |
+            ${{ runner.temp }}/moramarket-qa-*.zip
+            ${{ runner.temp }}/moramarket-qa-*.zip.sha256
+          if-no-files-found: error
+          retention-days: 7

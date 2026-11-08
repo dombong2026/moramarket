@@ -1,0 +1,42 @@
+MORAMARKET DEVELOPMENT INSTALLATION CANDIDATE
+============================================
+
+Status: QA ONLY. NOT PRODUCTION APPROVED OR LICENSED FOR DISTRIBUTION.
+
+Version: 0.0.1 development series
+Author: Ton Samith
+Official project: https://tonsamith.com
+
+This package has been assembled from a pinned Composer lockfile and a
+pinned npm lockfile using GitHub Actions. It contains Composer production
+dependencies in vendor/ and compiled assets in public/build/. It does not
+require Node.js, npm, or Composer on the customer's hosting account.
+
+For an eventual independently accepted installation:
+1. Use an empty dedicated MySQL database (MySQL 8.0+ recommended).
+2. Use PHP 8.3 or newer with pdo_mysql, mbstring, curl, dom, xml,
+   openssl, fileinfo, ctype, tokenizer, session and required extensions.
+3. Unzip the package OUTSIDE the web document root. Configure the web
+   server's document root to point to the contained moramarket/public/.
+4. Make storage/ and bootstrap/cache/ writable by the correctly scoped
+   PHP-FPM account, but do not make files world-writable.
+5. Use HTTPS and open the domain to access /installer/.
+6. Use the private installer access code from
+   storage/app/installer-access.key, then follow all five installer steps.
+7. Configure an independently verified SMTP provider for real password
+   recovery, and install a supervised queue worker if required.
+
+Do not connect this development candidate to a real customer database.
+Do not deploy this candidate on the live Moramarket domain.
+
+Not yet independently accepted:
+- Production aaPanel and cPanel installation / upgrades / restoration
+- Real SMTP delivery and password reset inbox acceptance
+- Online payment provider onboarding and marketplace compliance
+- Taxes, invoices, refunds, vendor payouts and settlement
+- Digital downloads and service fulfillment
+- Native translation, accessibility, legal/privacy review, real devices
+
+This ZIP may only be used for the isolated QA described in the GitHub
+release pipeline. A commercially approved buyer ZIP must be separately
+prepared after all applicable release gates pass.
