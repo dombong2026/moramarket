@@ -7,6 +7,7 @@ use App\Support\TableQuery;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Models\Product;
+use App\Services\MarketplaceNotificationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
@@ -21,7 +22,7 @@ class OrderController extends Controller
         return view('dashboard.orders',['orders'=>$orders,'workspace'=>'vendor']);
     }
 
-    public function update(Request $request, Order $order)
+    public function update(Request $request, Order $order, MarketplaceNotificationService $notices)
     {
         abort_unless($order->vendor_id===$request->user()->vendor->id,404);
         $data=$request->validate([
@@ -30,7 +31,7 @@ class OrderController extends Controller
             'tracking_number'=>['nullable','string','max:120'],
         ]);
 
-        DB::transaction(function () use ($order,$data) {
+        DB::transaction(function () use ($order,$data,$notices) {
             $locked=Order::whereKey($order->id)->lockForUpdate()->firstOrFail();
             $transitions=[
                 'pending'=>['processing','cancelled'],
@@ -59,6 +60,7 @@ class OrderController extends Controller
                 $updates['delivered_at']=now();
             }
             $locked->update($updates);
+            $notices->orderUpdated($locked);
         });
         return back()->with('success','Delivery status updated.');
     }

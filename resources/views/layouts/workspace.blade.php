@@ -20,6 +20,8 @@
  <button type="button" class="mobile-sidebar-button" data-sidebar-toggle aria-label="Toggle navigation" aria-expanded="false" aria-controls="workspace-sidebar">@include('partials.icon',['name'=>'menu'])</button>
  <div class="topbar-heading"><small>Moramarket / {{ ucfirst($scope) }}</small><strong>@yield('title', 'Overview')</strong></div>
  <div class="topbar-right">
+   @php($unreadNoticeCount = auth()->user()->unreadNotifications()->count())
+   <a class="icon-button notification-shortcut" href="{{ route('account.notifications.index') }}" aria-label="Notifications{{ $unreadNoticeCount ? ' ('.$unreadNoticeCount.' unread)' : '' }}">@include('partials.icon',['name'=>'mail'])@if($unreadNoticeCount)<span class="notification-count">{{ $unreadNoticeCount > 99 ? '99+' : $unreadNoticeCount }}</span>@endif</a>
    <button type="button" class="icon-button" data-theme-toggle aria-label="Toggle light and dark mode">@include('partials.icon',['name'=>'moon'])</button>
    <details class="profile-menu"><summary aria-label="Profile menu">@include('partials.icon',['name'=>'user'])</summary><div class="profile-panel"><div class="profile-name">{{ auth()->user()->name }}<small>{{ auth()->user()->email }}</small></div><a href="{{ route('account.home') }}">My Account</a><a href="{{ route('locale.home',['locale'=>app()->getLocale()]) }}">Marketplace</a><form method="POST" action="{{ route('logout') }}">@csrf<button>Sign out</button></form></div></details>
  </div>

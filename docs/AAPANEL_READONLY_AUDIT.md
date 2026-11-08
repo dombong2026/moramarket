@@ -55,3 +55,7 @@ As a correction to the initial audit, Composer 2.2.6 is Composer 2 and is compat
 Independently verify the actual PHP-FPM pool and extensions; safe web document root pointing to the eventual release public directory; dedicated writable runtime folders; clean customer-installation database; real SMTP password recovery; reproducible locked builds and self-contained buyer archive; backups, rollback, upgrades, legal/privacy/rights, digital entitlement delivery, payments and refunds; and real-browser/mobile accessibility. Production remains unchanged.
 
 Official requirements: https://laravel.com/framework/docs/deployment and https://vite.dev/blog/announcing-vite8.
+
+## Extended read-only Nginx/PHP-FPM inspection
+
+After a successful GitHub sync, run: python3 -B /root/moramarket-github/support/inspect-aapanel-vhost.py . It reads the known Moramarket aaPanel vhost and allowlisted PHP include, printing only sanitized configuration declarations. It cannot confirm the configuration is active or which PHP-FPM process serves a live request.

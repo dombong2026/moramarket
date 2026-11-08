@@ -17,6 +17,12 @@ jobs:
           php-version: '8.4'
           extensions: mbstring, dom, ctype, curl, fileinfo, gd, pdo_sqlite, sqlite3, pdo_mysql, xml
           coverage: none
+      - name: Validate safe hosting and recovery scripts
+        run: |
+          python3 -B support/inspect-aapanel-vhost.py --self-test
+          bash -n support/qa-lifecycle-recovery.sh
+          bash -n support/qa-installer-security.sh
+          bash -n support/aapanel-package-preflight.sh
       - name: Validate read-only aaPanel environment audit
         run: |
           bash -n support/aapanel-readonly-audit.sh

@@ -26,6 +26,7 @@ final class WorkspaceNavigation
                 ['Policy Center', 'shield', 'admin.policies.index', [], 'admin.policies.*'],
                 ['Knowledge Base', 'orders', 'admin.knowledge.index', [], 'admin.knowledge.*'],
                 ['Support Center', 'mail', 'admin.support.index', [], 'admin.support.*'],
+                ['Notifications', 'mail', 'account.notifications.index', [], 'account.notifications.*'],
                 ['Appearance', 'sun', 'admin.appearance', [], 'admin.appearance*'],
                 ['General Settings', 'edit', 'admin.settings', [], 'admin.settings*'],
                 ['System Health', 'shield', 'admin.health', [], 'admin.health'],
@@ -36,11 +37,13 @@ final class WorkspaceNavigation
                 ['My Products', 'box', 'vendor.products', [], 'vendor.products*'],
                 ['Store Orders', 'orders', 'vendor.orders', [], 'vendor.orders*'],
                 ['Delivery Settings', 'store', 'vendor.shipping.edit', [], 'vendor.shipping.*'],
+                ['Notifications', 'mail', 'account.notifications.index', [], 'account.notifications.*'],
                 ['Media Library', 'box', 'vendor.media', [], 'vendor.media*'],
             ],
             default => [
                 ['Overview', 'grid', 'account.home', [], 'account.home'],
                 ['My Orders', 'orders', 'account.orders', [], 'account.orders'],
+                ['Notifications', 'mail', 'account.notifications.index', [], 'account.notifications.*'],
                 ['Support Tickets', 'mail', 'account.support.index', [], 'account.support.*'],
             ],
         };

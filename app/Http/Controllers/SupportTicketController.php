@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Support\TableQuery;
 
 use App\Models\SupportTicket;
+use App\Models\User;
+use App\Services\MarketplaceNotificationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -32,17 +34,18 @@ class SupportTicketController extends Controller
         return view('dashboard.support-tickets',['tickets'=>$tickets,'workspace'=>'admin']);
     }
 
-    public function store(Request $request)
+    public function store(Request $request, MarketplaceNotificationService $notices)
     {
         $data=$request->validate([
             'subject'=>['required','string','min:5','max:190'],
             'message'=>['required','string','min:10','max:10000'],
         ]);
-        DB::transaction(function () use ($request,$data) {
+        DB::transaction(function () use ($request,$data,$notices) {
             $ticket=SupportTicket::create([
                 'user_id'=>$request->user()->id,'subject'=>$data['subject'],'status'=>'open',
             ]);
             $ticket->messages()->create(['user_id'=>$request->user()->id,'body'=>$data['message']]);
+            $notices->supportCreated($ticket);
         });
         return back()->with('success','Support ticket submitted.');
     }
@@ -56,24 +59,31 @@ class SupportTicketController extends Controller
         ]);
     }
 
-    public function reply(Request $request, SupportTicket $ticket)
+    public function reply(Request $request, SupportTicket $ticket, MarketplaceNotificationService $notices)
     {
         $this->own($request,$ticket);
         $data=$request->validate(['message'=>['required','string','min:2','max:10000']]);
 
-        DB::transaction(function () use ($ticket,$request,$data) {
+        DB::transaction(function () use ($ticket,$request,$data,$notices) {
             $ticket=SupportTicket::whereKey($ticket->id)->lockForUpdate()->firstOrFail();
             abort_if($ticket->status==='closed',422,'Closed tickets cannot accept replies. Reopen the ticket first.');
             $ticket->messages()->create(['user_id'=>$request->user()->id,'body'=>$data['message']]);
             $ticket->update(['status'=>$request->user()->isAdmin()?'waiting':'open']);
+            $notices->supportReplied($ticket, $request->user()->isAdmin());
         });
         return back()->with('success','Reply added.');
     }
 
-    public function status(Request $request, SupportTicket $ticket)
+    public function status(Request $request, SupportTicket $ticket, MarketplaceNotificationService $notices)
     {
         $data=$request->validate(['status'=>['required','in:open,waiting,closed']]);
-        $ticket->update(['status'=>$data['status']]);
+        DB::transaction(function () use ($ticket,$data,$notices) {
+            $locked = SupportTicket::whereKey($ticket->id)->lockForUpdate()->firstOrFail();
+            if ($locked->status !== $data['status']) {
+                $locked->update(['status'=>$data['status']]);
+                $notices->supportStatusChanged($locked);
+            }
+        });
         return back()->with('success','Ticket status updated.');
     }
 }

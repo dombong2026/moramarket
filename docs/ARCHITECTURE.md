@@ -26,14 +26,14 @@ Project status: active v0.0.1 source development, not an independently accepted 
 | Storage and migrations | config/filesystems.php, config/database.php, database/migrations |
 | Browser installer | public/installer/index.php |
 | Testing | tests/Feature, support/qa-installer.sh, .github/workflows/ci.yml |
-| Safe host diagnostics | support/aapanel-sync.sh, support/aapanel-readonly-audit.sh |
+| Safe host diagnostics | support/aapanel-sync.sh, support/aapanel-readonly-audit.sh, support/inspect-aapanel-vhost.py |
 
 ## Open gates and architectural limits
 
 - Digital items and services are listings only; paid digital download entitlement and service booking lifecycle are not complete.
 - Online payments, refunds, invoices/taxes, commissions, vendor payouts and settlement are not operational or certified.
 - Thirteen language URL choices are not equivalent to completed UI/legal translations.
-- SMTP, browser/mobile QA, scheduling/queues, full customer installation/upgrade/restore, security/legal/rights checks and support acceptance are incomplete.
+- Database-backed in-app notifications for support and COD order changes are implemented. SMTP, browser/mobile QA, scheduling/queues, full customer installation/upgrade/restore, security/legal/rights checks and support acceptance remain incomplete.
 - GitHub CI builds a nonproduction QA ZIP containing production vendor/ and compiled public/build/ and tests it in an extracted directory with isolated MySQL. No approved buyer ZIP, commercial license verification or updater exists yet.
 - composer.lock and package-lock.json are committed and verified. CI uses composer install and npm ci (no dependency resolution) on the supported PHP range.
 - GitHub repository is public despite proprietary licensing; review distribution/visibility.

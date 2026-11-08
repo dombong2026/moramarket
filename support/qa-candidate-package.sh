@@ -41,6 +41,8 @@ done
   php -r 'require "vendor/autoload.php"; echo "Packaged Composer autoloader works\n";'
   php -r '$m=json_decode(file_get_contents("public/build/manifest.json"),true,512,JSON_THROW_ON_ERROR); if(!is_array($m)||!count($m)){exit(1);} echo "Compiled manifest is valid\n";'
   bash "$GITHUB_WORKSPACE/support/qa-installer.sh"
+  bash "$GITHUB_WORKSPACE/support/qa-installer-security.sh"
+  MYSQL_PWD=CI_root_password_891 bash "$GITHUB_WORKSPACE/support/qa-lifecycle-recovery.sh"
 )
 echo 'PACKAGE_QA=PASS (fresh extracted archive and isolated MySQL)'
 echo 'PRODUCTION=NOT_MODIFIED'

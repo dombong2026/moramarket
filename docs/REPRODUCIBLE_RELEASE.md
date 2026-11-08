@@ -22,7 +22,8 @@ The qa-candidate-package CI job builds after the tests and isolated source insta
 5. Include a readable plain-text installation guide, proprietary notice, source SHA and checksums for important entrypoints.
 6. Create a single-root ZIP with moramarket/ inside; inspect it for unsafe paths and leaked secrets.
 7. Independently extract the ZIP into a fresh temporary directory, verify its checksums, ensure the packaged Composer autoloader and Vite manifest work, and run the entire HTTP installer flow against a disposable MySQL 8 container.
-8. Only if all gates pass, upload the ZIP as a GitHub Actions artifact named moramarket-QA-NOT-FOR-PRODUCTION, retained for seven days.
+8. Verify post-install HTTP private-file protection and installer lock, then rehearse MySQL backup/restore, same-version migration idempotence, and snapshot-based rollback in isolated CI databases. This does NOT verify a real future-version upgrade or recovery on actual hosting.
+9. Only if all gates pass, upload the ZIP as a GitHub Actions artifact named moramarket-QA-NOT-FOR-PRODUCTION, retained for seven days.
 
 No aaPanel command is run by this workflow. The QA ZIP is not a finished CodeCanyon/commercial buyer artifact and must not be deployed to a production site.
 

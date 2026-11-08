@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Order;
 use App\Models\Product;
 use App\Services\ShippingCalculator;
+use App\Services\MarketplaceNotificationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -40,7 +41,7 @@ class CheckoutController extends Controller
         return view('storefront.checkout',$summary);
     }
 
-    public function place(Request $request, ShippingCalculator $shipping)
+    public function place(Request $request, ShippingCalculator $shipping, MarketplaceNotificationService $notices)
     {
         $data=$request->validate([
             'customer_name'=>['required','string','max:160'],
@@ -53,7 +54,7 @@ class CheckoutController extends Controller
             return redirect()->route('cart.index')->withErrors(['cart'=>'Cart is empty.']);
         }
 
-        $orderIds=DB::transaction(function () use ($cart,$data,$request,$shipping) {
+        $orderIds=DB::transaction(function () use ($cart,$data,$request,$shipping,$notices) {
             $products=Product::query()->with(['vendor','category'])
                 ->whereIn('id',array_keys($cart))->orderBy('id')->lockForUpdate()->get();
 
@@ -101,6 +102,7 @@ class CheckoutController extends Controller
                     ]);
                     $product->decrement('stock',$quantity);
                 }
+                $notices->orderPlaced($order);
                 $ids[]=$order->id;
             }
             return $ids;
