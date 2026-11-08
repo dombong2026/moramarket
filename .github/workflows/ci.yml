@@ -301,7 +301,10 @@ jobs:
         run: |
           set -Eeuo pipefail
           bash support/qa-candidate-package.sh "$MORAMARKET_QA_ARCHIVE"
-          sha256sum "$MORAMARKET_QA_ARCHIVE" > "$MORAMARKET_QA_ARCHIVE.sha256"
+          (
+            cd "$(dirname "$MORAMARKET_QA_ARCHIVE")"
+            sha256sum "$(basename "$MORAMARKET_QA_ARCHIVE")" > "$(basename "$MORAMARKET_QA_ARCHIVE").sha256"
+          )
       - name: Retain nonproduction QA candidate archive
         uses: actions/upload-artifact@v4
         with:

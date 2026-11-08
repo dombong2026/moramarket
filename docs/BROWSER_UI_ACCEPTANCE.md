@@ -56,3 +56,7 @@ before any separate installation is contemplated.
 DO NOT extract the inner ZIP into the live webroot or execute /installer/ on
 the live domain yet. The finished commercial buyer ZIP and actual host-based
 acceptance remain separate gates.
+
+## Theme persistence regression
+
+The browser matrix deliberately checks cookie-based dark mode after prior light-page visits. The frontend JavaScript must honor the server's existing preference cookie ahead of stale localStorage, and UI toggles must survive a full page reload. This regression was discovered by the first Chromium run.

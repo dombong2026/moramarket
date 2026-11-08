@@ -298,5 +298,11 @@ const oldModal = $('#mm-old-modal')?.dataset.modal;
 if (oldModal && document.getElementById(oldModal) instanceof HTMLDialogElement) {
     openDialog(oldModal);
 }
-try { setTheme(localStorage.getItem('mm-theme') === 'dark' ? 'dark' : 'light'); }
-catch (_) { setTheme('light'); }
+// The server renders html[data-theme] from the unencrypted preference cookie.
+// Keep the cookie authoritative when localStorage and cookie disagree (e.g.
+// after a restored session), and use localStorage only as a fallback.
+let storedTheme = null;
+try { storedTheme = localStorage.getItem('mm-theme'); } catch (_) { /* optional */ }
+const cookieTheme = document.cookie.match(/(?:^|;\s*)mm-theme=(dark|light)(?:;|$)/)?.[1];
+const initialTheme = cookieTheme || storedTheme || document.documentElement.dataset.theme;
+setTheme(initialTheme === 'dark' ? 'dark' : 'light');

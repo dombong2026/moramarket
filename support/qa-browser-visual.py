@@ -134,8 +134,13 @@ def interactions(page, role, viewport):
         toggle.click()
         check(page.locator("html").get_attribute("data-theme") == "dark",
               f"{role}/{viewport} theme toggle")
-        toggle.click()
-        stats["interaction_checks"] += 1
+        page.reload(wait_until="networkidle")
+        check(page.locator("html").get_attribute("data-theme") == "dark",
+              f"{role}/{viewport} theme persistence after reload")
+        page.locator('[data-theme-toggle]').first.click()
+        check(page.locator("html").get_attribute("data-theme") == "light",
+              f"{role}/{viewport} light mode restored")
+        stats["interaction_checks"] += 3
     if viewport == "mobile":
         mobile = page.locator("[data-sidebar-toggle]")
         if mobile.count() and mobile.is_visible():
