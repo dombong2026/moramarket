@@ -23,6 +23,7 @@ jobs:
           bash -n support/qa-lifecycle-recovery.sh
           bash -n support/qa-installer-security.sh
           bash -n support/aapanel-package-preflight.sh
+          python3 -B support/qa-archive-validator.py --self-test
       - name: Validate read-only aaPanel environment audit
         run: |
           bash -n support/aapanel-readonly-audit.sh
@@ -300,6 +301,7 @@ jobs:
       - name: Verify extracted package and new installation
         run: |
           set -Eeuo pipefail
+          python3 -B support/qa-archive-validator.py --ci "$MORAMARKET_QA_ARCHIVE"
           bash support/qa-candidate-package.sh "$MORAMARKET_QA_ARCHIVE"
           (
             cd "$(dirname "$MORAMARKET_QA_ARCHIVE")"
