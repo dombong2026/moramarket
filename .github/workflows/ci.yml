@@ -168,9 +168,91 @@ jobs:
         run: php -l public/installer/index.php && bash support/qa-installer.sh
 
 
+
+  browser-visual-qa:
+    name: Chromium UI acceptance (desktop and mobile)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: mbstring, dom, ctype, curl, fileinfo, gd, pdo_sqlite, sqlite3, pdo_mysql, xml, intl, zip
+          coverage: none
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install application dependencies from committed locks
+        run: |
+          set -Eeuo pipefail
+          composer install --no-interaction --prefer-dist --no-progress
+          npm ci --ignore-scripts --no-audit --no-fund
+          npm run build
+          git diff --exit-code -- composer.lock package-lock.json
+      - name: Create disposable SQLite installation and QA accounts
+        run: |
+          set -Eeuo pipefail
+          cp .env.example .env
+          python3 - <<'PYTHON'
+          import os
+          from pathlib import Path
+          data = Path('.env').read_text().splitlines()
+          fields = {
+              'APP_ENV':'testing',
+              'APP_DEBUG':'false',
+              'APP_URL':'http://127.0.0.1:8096',
+              'DB_CONNECTION':'sqlite',
+              'DB_DATABASE':str(Path(os.environ['RUNNER_TEMP'])/'moramarket-visual-qa.sqlite'),
+              'SESSION_DRIVER':'file',
+              'CACHE_STORE':'file',
+              'QUEUE_CONNECTION':'sync',
+              'MAIL_MAILER':'log',
+          }
+          safe = [v for v in data if v.split('=', 1)[0] not in fields]
+          Path('.env').write_text('\n'.join(safe + [f'{k}={v}' for k,v in fields.items()]) + '\n')
+          Path(fields['DB_DATABASE']).touch()
+          PYTHON
+          php artisan key:generate
+          php artisan migrate --force
+          php artisan db:seed --force
+          APP_ENV=testing php support/qa-visual-fixtures.php
+          test -s storage/app/.moramarket-installed || touch storage/app/.moramarket-installed
+      - name: Install isolated Chromium for visual and interaction checks
+        run: |
+          python3 -m pip install --disable-pip-version-check playwright==1.56.0
+          python3 -m playwright install --with-deps chromium
+      - name: Browser-check storefront, auth and role workspaces
+        run: |
+          set -Eeuo pipefail
+          php artisan serve --host=127.0.0.1 --port=8096 >"$RUNNER_TEMP/moramarket-visual-php.log" 2>&1 &
+          PID=$!
+          trap 'kill "$PID" 2>/dev/null || true; wait "$PID" 2>/dev/null || true' EXIT
+          READY=0
+          for i in $(seq 1 30); do
+            if curl -fsS --max-time 2 http://127.0.0.1:8096/login >/dev/null; then READY=1; break; fi
+            sleep 1
+          done
+          test "$READY" -eq 1 || {
+            tail -80 "$RUNNER_TEMP/moramarket-visual-php.log"
+            exit 1
+          }
+          python3 support/qa-browser-visual.py
+      - name: Archive visual acceptance evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: moramarket-BROWSER-UI-QA
+          path: ${{ runner.temp }}/moramarket-browser-qa/
+          if-no-files-found: warn
+          retention-days: 7
+
   qa-candidate-package:
     name: Self-contained QA ZIP and independent MySQL installer
-    needs: [test, compatibility-php83, compatibility-php85, installer]
+    needs: [test, compatibility-php83, compatibility-php85, installer, browser-visual-qa]
     runs-on: ubuntu-latest
     services:
       mysql:
