@@ -50,7 +50,7 @@ The script always reports RELEASE_READY=NO because commercial acceptance is sepa
 - A source clone has no vendor/autoload.php or public/build/manifest.json. A standalone buyer release must include both.
 - The current repository is publicly visible while its license is proprietary. Visibility and distribution require deliberate review.
 
-## Release acceptance prerequisites
+As a correction to the initial audit, Composer 2.2.6 is Composer 2 and is compatible with the major-version check; the original helper incorrectly expected the phrase 'Composer version 2.x'. The host should not upgrade system Composer merely to clear this reporting error. If Node or npm are not in the shell PATH, that does not prove they are absent from the host; prebuilt releases should not depend on a server-side Node installation.\n\n## Release acceptance prerequisites
 
 Independently verify the actual PHP-FPM pool and extensions; safe web document root pointing to the eventual release public directory; dedicated writable runtime folders; clean customer-installation database; real SMTP password recovery; reproducible locked builds and self-contained buyer archive; backups, rollback, upgrades, legal/privacy/rights, digital entitlement delivery, payments and refunds; and real-browser/mobile accessibility. Production remains unchanged.
 

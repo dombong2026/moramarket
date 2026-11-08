@@ -29,6 +29,13 @@ jobs:
           grep -qx 'SERVER_CONFIG=NOT_MODIFIED' <<< "$REPORT"
           grep -qx 'RELEASE_READY=NO' <<< "$REPORT"
           test "$BEFORE" = "$(git status --porcelain --untracked-files=normal)"
+      - name: Audit Composer 2 version banner compatibility
+        run: |
+          # Both formats occur in real Composer 2 releases.
+          banner_pattern='^Composer[[:space:]](version[[:space:]])?2\.[0-9]+\.[0-9]+([[:space:]]|$)'
+          [[ 'Composer 2.2.6 2022-02-04 17:00:38' =~ $banner_pattern ]]
+          [[ 'Composer version 2.9.2 2026-01-01 00:00:00' =~ $banner_pattern ]]
+          ! [[ 'Composer version 1.10.30' =~ $banner_pattern ]]
       - name: Install Composer dependencies
         run: composer install --no-interaction --prefer-dist --no-progress
       - name: Prepare environment
@@ -56,6 +63,29 @@ jobs:
         run: node --check resources/js/app.js
       - name: Build Tailwind assets
         run: npm run build
+
+  compatibility-php85:
+    name: PHP 8.5 Compatibility
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up PHP 8.5
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.5'
+          extensions: mbstring, dom, ctype, curl, fileinfo, gd, pdo_sqlite, sqlite3, pdo_mysql, xml, intl, zip
+          coverage: none
+      - name: Install locked-or-resolved Composer dependencies
+        run: composer install --no-interaction --prefer-dist --no-progress
+      - name: Set up test environment
+        run: |
+          cp .env.example .env
+          php artisan key:generate
+      - name: Verify Laravel compatibility on PHP 8.5
+        run: |
+          php artisan test --compact
+          php artisan view:cache
+          php artisan route:list --json > /tmp/moramarket-php85-routes.json
 
   installer:
     runs-on: ubuntu-latest

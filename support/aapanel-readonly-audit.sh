@@ -95,12 +95,13 @@ if [[ -n "$SELECTED" ]]; then
 else
     block 'No PHP >=8.3 CLI binary found'
 fi
-info 'Live PHP-FPM version/extensions and Nginx FastCGI mapping: UNVERIFIED (CLI audit only)'
+info 'Live PHP-FPM version/extensions and Nginx FastCGI mapping: UNVERIFIED (CLI audit only); PHP 8.4 is the existing CI baseline'
 
 section 'COMPOSER AND NODE TOOLCHAINS'
 if command -v composer >/dev/null 2>&1; then
     composer_version="$(composer --version --no-ansi 2>/dev/null | head -n 1 || true)"
-    if [[ "$composer_version" =~ Composer[[:space:]]version[[:space:]]2\. ]]; then
+    # Composer 2.x prints both 'Composer 2.2.6' and 'Composer version 2.9.2' in supported releases.
+    if [[ "$composer_version" =~ ^Composer[[:space:]](version[[:space:]])?2\.[0-9]+\.[0-9]+([[:space:]]|$) ]]; then
         pass "$composer_version"
     else
         warn "Composer 2 not confirmed: $composer_version"
@@ -122,12 +123,12 @@ if command -v node >/dev/null 2>&1; then
         warn 'Node.js version could not be parsed'
     fi
 else
-    warn 'Node.js not found (precompiled release assets required)'
+    warn 'Node.js not found in current PATH (precompiled release assets required)'
 fi
 if command -v npm >/dev/null 2>&1; then
     info "npm version: $(npm --version 2>/dev/null || true)"
 else
-    warn 'npm not found'
+    warn 'npm not found in current PATH'
 fi
 
 section 'MYSQL/MARIADB BINARIES; NO SQL LOGIN'
